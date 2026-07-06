@@ -1,4 +1,5 @@
 import { Lock, Package, Unlock } from "lucide-react"
+import Link from "next/link"
 
 import { PowerScoreBar } from "@/components/dashboard/PowerScoreBar"
 import { Badge } from "@/components/ui/badge"
@@ -67,9 +68,15 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
             ))}
           </ul>
         </div>
-        <Button className="w-full" disabled={pack.locked} variant={pack.locked ? "outline" : "default"}>
-          {pack.locked ? "Locked" : "View Pack"}
-        </Button>
+        {pack.locked ? (
+          <Button className="w-full" disabled variant="outline">
+            Locked
+          </Button>
+        ) : (
+          <Button asChild className="w-full">
+            <Link href={`/skills/${pack.id}`}>View Pack</Link>
+          </Button>
+        )}
       </CardContent>
     </Card>
   )
