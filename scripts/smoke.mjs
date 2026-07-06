@@ -2,7 +2,17 @@ import { chromium } from "playwright-core"
 
 const edgePath = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
 const baseUrl = process.env.SMOKE_BASE_URL ?? "http://127.0.0.1:3000"
-const routes = ["/", "/models", "/agents", "/mcp", "/skills", "/compare", "/recommend", "/pricing"]
+const routes = [
+  "/",
+  "/models",
+  "/agents",
+  "/mcp",
+  "/skills",
+  "/skills/ai-coding-starter",
+  "/compare",
+  "/recommend",
+  "/pricing",
+]
 
 const browser = await chromium.launch({ executablePath: edgePath, headless: true })
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 })
@@ -20,6 +30,9 @@ for (const route of routes) {
   const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" })
   statuses.push(`${response?.status() ?? "no-response"} ${route}`)
 }
+
+const manifestResponse = await page.request.get(`${baseUrl}/api/skill-packs/ai-coding-starter/manifest`)
+statuses.push(`${manifestResponse.status()} /api/skill-packs/ai-coding-starter/manifest`)
 
 await page.goto(`${baseUrl}/recommend?task=large-codebase`, { waitUntil: "networkidle" })
 const recommendH1 = await page.locator("h1").textContent()

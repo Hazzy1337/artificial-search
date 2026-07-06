@@ -92,6 +92,35 @@ export type SkillPack = {
   highlighted?: boolean
 }
 
+export type SkillPackInstallFile = {
+  path: string
+  content: string
+}
+
+export type SkillPackInstallSkill = {
+  id: string
+  name: string
+  description: string
+  files: SkillPackInstallFile[]
+}
+
+export type SkillPackInstallManifest = {
+  schemaVersion: 1
+  kind: "artificial-search.skill-pack"
+  id: string
+  name: string
+  summary: string
+  tier: SkillPackTier
+  compatibilityScore: number
+  notice: string
+  install: {
+    target: "$CODEX_HOME/skills"
+    command: string
+    steps: string[]
+  }
+  skills: SkillPackInstallSkill[]
+}
+
 export type RecommendationTask =
   | "write-code"
   | "fix-bugs"

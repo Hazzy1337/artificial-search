@@ -3,9 +3,11 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { PowerScoreBar } from "@/components/dashboard/PowerScoreBar"
+import { SkillPackInstallPanel } from "@/components/skills/SkillPackInstallPanel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { skillPacks } from "@/lib/data"
+import { createSkillPackManifestJson } from "@/lib/skillPackManifest"
 
 type SkillPackDetailPageProps = {
   params: Promise<{
@@ -28,6 +30,7 @@ export default async function SkillPackDetailPage({ params }: SkillPackDetailPag
   }
 
   const StatusIcon = pack.locked ? Lock : Unlock
+  const manifestJson = createSkillPackManifestJson(pack)
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
@@ -79,6 +82,8 @@ export default async function SkillPackDetailPage({ params }: SkillPackDetailPag
         <DetailPanel title="Inside The Pack" items={pack.inside} />
         <DetailPanel title="Included Workflows" items={pack.features} />
       </section>
+
+      <SkillPackInstallPanel locked={pack.locked} manifestJson={manifestJson} packId={pack.id} />
 
       <section className="luxury-panel rounded-lg p-5">
         <div className="flex items-center gap-2 text-stone-50">
