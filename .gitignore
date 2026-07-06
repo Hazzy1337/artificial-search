@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+.edge-qa*/
+qa-*.png
 
 # next.js
 /.next/
