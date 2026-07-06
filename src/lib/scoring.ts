@@ -53,8 +53,8 @@ export function sortByCategory(models: AiModel[], category: ModelSortCategory) {
 
   if (category === "long-context") {
     return sortable
-      .filter((model) => model.contextWindow.toLowerCase().includes("long"))
-      .sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a))
+      .filter((model) => model.contextTokens >= 200_000)
+      .sort((a, b) => b.contextTokens - a.contextTokens)
   }
 
   if (category === "cheap") {
@@ -78,7 +78,50 @@ export function getRecommendedStack(task: RecommendationTask) {
   return recommendations.find((stack) => stack.task === task) ?? recommendations[0]
 }
 
+export function findRecommendationByQuery(query: string) {
+  const normalizedQuery = normalizeSearchText(query)
+
+  if (!normalizedQuery) {
+    return getRecommendedStack("large-codebase")
+  }
+
+  const exactTask = recommendations.find((stack) => stack.task === normalizedQuery)
+
+  if (exactTask) {
+    return exactTask
+  }
+
+  const scored = recommendations
+    .map((stack) => {
+      const searchable = [stack.label, stack.task, ...stack.keywords].map(normalizeSearchText)
+      const score = searchable.reduce((total, term) => {
+        if (!term) {
+          return total
+        }
+
+        if (normalizedQuery === term) {
+          return total + 12
+        }
+
+        if (normalizedQuery.includes(term) || term.includes(normalizedQuery)) {
+          return total + 6
+        }
+
+        const wordMatches = term.split(" ").filter((word) => normalizedQuery.includes(word)).length
+        return total + wordMatches
+      }, 0)
+
+      return { stack, score }
+    })
+    .sort((a, b) => b.score - a.score)
+
+  return scored[0]?.score > 0 ? scored[0].stack : getRecommendedStack("research")
+}
+
 function roundScore(value: number) {
   return Math.round(value * 10) / 10
 }
 
+function normalizeSearchText(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/gi, " ").trim()
+}

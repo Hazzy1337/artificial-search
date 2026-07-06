@@ -1,13 +1,10 @@
 import { AlertTriangle } from "lucide-react"
 
 import { McpConfigGenerator } from "@/components/mcp/McpConfigGenerator"
-import { McpCard } from "@/components/mcp/McpCard"
-import { Badge } from "@/components/ui/badge"
+import { McpDirectory } from "@/components/mcp/McpDirectory"
 import { mcpServers } from "@/lib/data"
 
 export default function McpPage() {
-  const categories = Array.from(new Set(mcpServers.map((server) => server.category)))
-
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <section className="space-y-2">
@@ -24,27 +21,12 @@ export default function McpPage() {
           Security warning
         </h2>
         <p className="mt-2 text-sm leading-6 text-red-100/90">
-          MCP servers can access files, commands, APIs and projects. Artificial Search shows risk level, permissions and sandbox
-          recommendations so teams can avoid granting broad access by accident.
+          MCP servers may access files, shell commands, APIs and private project data. Verify permissions, run unknown
+          servers in a sandbox and never expose secrets.
         </p>
       </section>
 
-      <section className="luxury-panel rounded-lg p-4">
-        <h2 className="mb-3 text-lg font-semibold text-stone-50">Categories</h2>
-        <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" key={category} variant="outline">
-              {category}
-            </Badge>
-          ))}
-        </div>
-      </section>
-
-      <div className="grid gap-4 xl:grid-cols-2">
-        {mcpServers.map((server) => (
-          <McpCard key={server.id} server={server} />
-        ))}
-      </div>
+      <McpDirectory servers={mcpServers} />
 
       <McpConfigGenerator />
     </main>

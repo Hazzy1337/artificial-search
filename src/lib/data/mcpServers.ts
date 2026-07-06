@@ -12,6 +12,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 94,
     permissions: ["Read repository files", "Maintain local index"],
+    isPlaceholder: true,
   },
   {
     id: "filesystem",
@@ -24,6 +25,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 90,
     permissions: ["Read files", "Write files when allowed"],
+    isPlaceholder: true,
   },
   {
     id: "git",
@@ -36,6 +38,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 88,
     permissions: ["Read git metadata", "Run selected git commands"],
+    isPlaceholder: true,
   },
   {
     id: "github",
@@ -48,6 +51,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 91,
     permissions: ["Repository API", "Issue and PR metadata"],
+    isPlaceholder: true,
   },
   {
     id: "browser",
@@ -60,6 +64,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 87,
     permissions: ["Open URLs", "Interact with pages"],
+    isPlaceholder: true,
   },
   {
     id: "database",
@@ -72,6 +77,7 @@ export const mcpServers: McpServer[] = [
     access: "Premium",
     rating: 82,
     permissions: ["Schema read", "Query execution"],
+    isPlaceholder: true,
   },
   {
     id: "context7",
@@ -84,6 +90,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 89,
     permissions: ["Network docs lookup"],
+    isPlaceholder: true,
   },
   {
     id: "memory",
@@ -96,6 +103,7 @@ export const mcpServers: McpServer[] = [
     access: "Premium",
     rating: 78,
     permissions: ["Read memory", "Write memory"],
+    isPlaceholder: true,
   },
   {
     id: "repomix",
@@ -108,6 +116,7 @@ export const mcpServers: McpServer[] = [
     access: "Free",
     rating: 84,
     permissions: ["Read repository files", "Generate snapshot"],
+    isPlaceholder: true,
   },
   {
     id: "sandbox-policy",
@@ -120,6 +129,6 @@ export const mcpServers: McpServer[] = [
     access: "Pro",
     rating: 86,
     permissions: ["Read config", "Audit permissions"],
+    isPlaceholder: true,
   },
 ]
-

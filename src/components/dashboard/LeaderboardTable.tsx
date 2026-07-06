@@ -14,10 +14,11 @@ import type { AiModel } from "@/lib/types"
 
 type LeaderboardTableProps = {
   models: AiModel[]
+  preserveOrder?: boolean
 }
 
-export function LeaderboardTable({ models }: LeaderboardTableProps) {
-  const sorted = [...models].sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a))
+export function LeaderboardTable({ models, preserveOrder }: LeaderboardTableProps) {
+  const sorted = preserveOrder ? models : [...models].sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a))
 
   return (
     <Table>

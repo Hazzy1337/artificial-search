@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { aiAgents, mcpServers, skillPacks } from "@/lib/data"
+import { createDemoMcpConfig } from "@/lib/mcpConfig"
 
 export function McpConfigGenerator() {
   const [agentId, setAgentId] = useState(aiAgents[0].id)
@@ -16,21 +17,15 @@ export function McpConfigGenerator() {
 
   const config = useMemo(() => {
     const servers = mcpServers.filter((server) => selectedServerIds.includes(server.id))
-    const mcpConfig = Object.fromEntries(
-      servers.map((server) => [
-        server.id,
-        {
-          command: "npx",
-          args: [`@artificial-search/${server.id}-mcp`],
-        },
-      ])
-    )
+    const demoConfig = JSON.parse(createDemoMcpConfig(servers))
 
     return JSON.stringify(
       {
+        notice:
+          "Demo config - verify package names before installing. Artificial Search does not claim these placeholder commands are installable.",
         agent: aiAgents.find((agent) => agent.id === agentId)?.name,
         skillPack: skillPacks.find((pack) => pack.id === skillPackId)?.name,
-        mcpServers: mcpConfig,
+        mcpServers: demoConfig.mcpServers,
       },
       null,
       2
@@ -53,6 +48,9 @@ export function McpConfigGenerator() {
         <FileText aria-hidden="true" className="size-5 text-amber-200" />
         Generate MCP config
       </h2>
+      <p className="mt-2 text-sm leading-6 text-stone-400">
+        Demo config - verify package names before installing. Placeholder commands are not claimed to be installable.
+      </p>
       <div className="mt-4 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-4">
           <div className="grid gap-2">
@@ -88,7 +86,7 @@ export function McpConfigGenerator() {
           <div className="grid gap-2">
             <p className="text-sm font-medium text-stone-200">MCP servers</p>
             <div className="grid gap-2 sm:grid-cols-2">
-              {mcpServers.slice(0, 8).map((server) => (
+              {mcpServers.map((server) => (
                 <label className="flex min-h-11 items-center gap-2 rounded-lg border border-amber-200/10 bg-white/[0.045] p-2 text-sm text-stone-300" key={server.id}>
                   <Checkbox
                     checked={selectedServerIds.includes(server.id)}

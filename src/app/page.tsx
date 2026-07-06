@@ -6,7 +6,7 @@ import { ScoreBadge } from "@/components/dashboard/ScoreBadge"
 import { TrendChart } from "@/components/dashboard/TrendChart"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { aiAgents, aiModels, mcpServers, powerIndexData } from "@/lib/data"
+import { aiAgents, aiModels, mcpServers, powerIndexData, powerIndexSeries } from "@/lib/data"
 import { calculateAgentScore, calculateOverallScore, calculatePricePowerScore } from "@/lib/scoring"
 
 export default function Home() {
@@ -61,8 +61,8 @@ export default function Home() {
       <section className="space-y-4 py-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-semibold text-stone-50">Today&apos;s Leaders</h2>
-            <p className="mt-1 text-sm text-stone-400">Demo leaders across models, agents, MCP and movement signals.</p>
+            <h2 className="text-2xl font-semibold text-stone-50">Prototype leaders</h2>
+            <p className="mt-1 text-sm text-stone-400">Demo leaders across models, agents, MCP and movement signals. Not real-time yet.</p>
           </div>
           <Badge className="border-amber-200/30 bg-amber-200/10 text-amber-100" variant="outline">
             Demo data
@@ -93,14 +93,14 @@ export default function Home() {
       <section className="grid gap-4 py-6 xl:grid-cols-[minmax(380px,0.85fr)_minmax(0,1.65fr)]">
         <div className="luxury-panel min-w-0 rounded-lg p-4">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-stone-50">AI Power Index Over Time</h2>
+            <h2 className="text-xl font-semibold text-stone-50">Demo Intelligence Index Over Time</h2>
             <p className="mt-1 text-sm text-stone-400">Mock weekly trend, normalized to a 0-100 demo index.</p>
           </div>
-          <TrendChart data={powerIndexData} />
+          <TrendChart data={powerIndexData} series={powerIndexSeries} />
         </div>
         <div className="luxury-panel min-w-0 rounded-lg p-4">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-stone-50">Top AI Models Today</h2>
+            <h2 className="text-xl font-semibold text-stone-50">Top AI Models in Prototype Scoring</h2>
             <p className="mt-1 text-sm text-stone-400">Ranked by the demo scoring formula from the task file.</p>
           </div>
           <LeaderboardTable models={aiModels} />

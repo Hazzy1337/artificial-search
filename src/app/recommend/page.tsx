@@ -1,3 +1,5 @@
+import { Suspense } from "react"
+
 import { RecommendationWizard } from "@/components/recommend/RecommendationWizard"
 
 export default function RecommendPage() {
@@ -10,7 +12,9 @@ export default function RecommendPage() {
           Pick a task and get a demo recommendation for model, agent, MCP servers and skill pack.
         </p>
       </section>
-      <RecommendationWizard />
+      <Suspense fallback={<div className="luxury-panel rounded-lg p-4 text-sm text-stone-300">Loading recommendation wizard...</div>}>
+        <RecommendationWizard />
+      </Suspense>
     </main>
   )
 }

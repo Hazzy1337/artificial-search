@@ -43,6 +43,16 @@ export function McpCard({ server }: McpCardProps) {
           <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" variant="outline">
             {server.access}
           </Badge>
+          <Badge
+            className={
+              server.verifiedCommand && !server.isPlaceholder
+                ? "border-cyan-300/30 bg-cyan-300/10 text-cyan-100"
+                : "border-stone-300/20 bg-white/[0.055] text-stone-200"
+            }
+            variant="outline"
+          >
+            {server.verifiedCommand && !server.isPlaceholder ? "Verified command" : "Demo placeholder"}
+          </Badge>
         </div>
         <div>
           <p className="mb-2 text-sm font-medium text-stone-200">Compatible with</p>

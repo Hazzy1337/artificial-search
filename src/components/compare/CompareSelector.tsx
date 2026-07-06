@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 
 import { ComparisonTable } from "@/components/compare/ComparisonTable"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { aiAgents, aiModels } from "@/lib/data"
 import { calculateAgentScore, calculateOverallScore } from "@/lib/scoring"
@@ -37,6 +38,7 @@ export function CompareSelector() {
             context: model.contextWindow,
             vision: model.supportsVision ? String(model.vision) : "No",
             toolUse: model.supportsTools ? "Yes" : "Limited",
+            strengths: model.strengths.join(", "),
             bestUseCase: model.bestFor.join(", "),
             weaknesses: model.weaknesses.join(", "),
             score: String(calculateOverallScore(model)),
@@ -56,6 +58,7 @@ export function CompareSelector() {
           context: "Model dependent",
           vision: "Model dependent",
           toolUse: String(agent.toolUse),
+          strengths: agent.bestFor.join(", "),
           bestUseCase: agent.bestFor.join(", "),
           weaknesses: agent.weaknesses.join(", "),
           score: String(calculateAgentScore(agent)),
@@ -71,11 +74,12 @@ export function CompareSelector() {
     { metric: "Agent Power", values: subjects.map((item) => item.agentPower) },
     { metric: "Speed", values: subjects.map((item) => item.speed) },
     { metric: "Cost", values: subjects.map((item) => item.cost) },
-    { metric: "Context", values: subjects.map((item) => item.context) },
+    { metric: "Context Window", values: subjects.map((item) => item.context) },
     { metric: "Vision", values: subjects.map((item) => item.vision) },
     { metric: "Tool Use", values: subjects.map((item) => item.toolUse) },
+    { metric: "Strengths", values: subjects.map((item) => item.strengths) },
     { metric: "Overall", values: subjects.map((item) => item.score) },
-    { metric: "Best Use Case", values: subjects.map((item) => item.bestUseCase) },
+    { metric: "Best For", values: subjects.map((item) => item.bestUseCase) },
     { metric: "Weaknesses", values: subjects.map((item) => item.weaknesses) },
   ]
 
@@ -94,6 +98,14 @@ export function CompareSelector() {
           <Badge className="border-amber-300/30 bg-amber-300/10 text-amber-100" variant="outline">
             Demo comparison
           </Badge>
+          <Button
+            className="border-cyan-200/20 bg-white/[0.035] text-cyan-100 hover:bg-cyan-200/10"
+            onClick={() => setSelectedIds(defaultSelection)}
+            size="sm"
+            variant="outline"
+          >
+            Reset comparison
+          </Button>
         </div>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {selectedIds.map((selectedId, index) => (

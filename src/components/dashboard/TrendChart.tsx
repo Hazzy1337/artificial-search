@@ -2,21 +2,14 @@
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
-import type { PowerIndexPoint } from "@/lib/types"
+import type { PowerIndexPoint, PowerIndexSeries } from "@/lib/types"
 
 type TrendChartProps = {
   data: PowerIndexPoint[]
+  series: PowerIndexSeries[]
 }
 
-const series = [
-  { key: "gpt55", name: "GPT-5.5", color: "#e7c873" },
-  { key: "claude", name: "Claude", color: "#b7a1ff" },
-  { key: "gemini", name: "Gemini", color: "#6ee7f2" },
-  { key: "deepseek", name: "DeepSeek", color: "#5fe0a6" },
-  { key: "qwen", name: "Qwen", color: "#ef9557" },
-] as const
-
-export function TrendChart({ data }: TrendChartProps) {
+export function TrendChart({ data, series }: TrendChartProps) {
   return (
     <div className="h-[320px] w-full" aria-label="AI Power Index Over Time chart">
       <ResponsiveContainer height="100%" width="100%">

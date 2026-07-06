@@ -72,7 +72,7 @@ export function ModelsExplorer({ models }: ModelsExplorerProps) {
 
       <div className="luxury-panel rounded-lg p-4">
         <h2 className="mb-4 text-lg font-semibold text-stone-50">Filtered table</h2>
-        <LeaderboardTable models={visibleModels} />
+        <LeaderboardTable models={visibleModels} preserveOrder />
       </div>
     </div>
   )

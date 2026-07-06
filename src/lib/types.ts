@@ -17,6 +17,7 @@ export type AiModel = {
   speed: number
   costEfficiency: number
   contextWindow: string
+  contextTokens: number
   supportsVision: boolean
   supportsTools: boolean
   priceLevel: PriceLevel
@@ -69,6 +70,11 @@ export type McpServer = {
   access: "Free" | "Premium" | "Pro"
   rating: number
   permissions: string[]
+  verifiedCommand?: {
+    command: string
+    args: string[]
+  }
+  isPlaceholder?: boolean
 }
 
 export type SkillPackTier = "Free" | "Premium" | "Pro"
@@ -106,6 +112,8 @@ export type RecommendedStack = {
   skillPack: string
   warning: string
   reasoning: string[]
+  alternatives: string[]
+  keywords: string[]
 }
 
 export type PowerIndexPoint = {
@@ -115,6 +123,12 @@ export type PowerIndexPoint = {
   gemini: number
   deepseek: number
   qwen: number
+}
+
+export type PowerIndexSeries = {
+  key: keyof Omit<PowerIndexPoint, "day">
+  name: string
+  color: string
 }
 
 export type PricingPlan = {
