@@ -1,8 +1,20 @@
 import { Suspense } from "react"
+import type { Metadata } from "next"
 
 import { RecommendationWizard } from "@/components/recommend/RecommendationWizard"
+import { getCatalogSkillPacks } from "@/lib/catalog"
+import { getDemoUser } from "@/lib/demoUser"
 
-export default function RecommendPage() {
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "Recommendations",
+  description: "Prototype AI stack recommendations with visible demo-plan skill access notes.",
+}
+
+export default async function RecommendPage() {
+  const [user, skillPacks] = await Promise.all([getDemoUser(), getCatalogSkillPacks()])
+
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <section className="space-y-2">
@@ -13,7 +25,7 @@ export default function RecommendPage() {
         </p>
       </section>
       <Suspense fallback={<div className="luxury-panel rounded-lg p-4 text-sm text-stone-300">Loading recommendation wizard...</div>}>
-        <RecommendationWizard />
+        <RecommendationWizard skillPacks={skillPacks} userPlan={user.plan} />
       </Suspense>
     </main>
   )

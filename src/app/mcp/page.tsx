@@ -1,10 +1,20 @@
 import { AlertTriangle } from "lucide-react"
+import type { Metadata } from "next"
 
 import { McpConfigGenerator } from "@/components/mcp/McpConfigGenerator"
 import { McpDirectory } from "@/components/mcp/McpDirectory"
-import { mcpServers } from "@/lib/data"
+import { getCatalogAgents, getCatalogMcpServers, getCatalogSkillPacks } from "@/lib/catalog"
 
-export default function McpPage() {
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "MCP Servers",
+  description: "MCP server catalog with seeded status, risk labels, permissions and placeholder warnings.",
+}
+
+export default async function McpPage() {
+  const [agents, mcpServers, skillPacks] = await Promise.all([getCatalogAgents(), getCatalogMcpServers(), getCatalogSkillPacks()])
+
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <section className="space-y-2">
@@ -28,7 +38,7 @@ export default function McpPage() {
 
       <McpDirectory servers={mcpServers} />
 
-      <McpConfigGenerator />
+      <McpConfigGenerator agents={agents} mcpServers={mcpServers} skillPacks={skillPacks} />
     </main>
   )
 }

@@ -6,18 +6,25 @@ import { ComparisonTable } from "@/components/compare/ComparisonTable"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { aiAgents, aiModels } from "@/lib/data"
 import { calculateAgentScore, calculateOverallScore } from "@/lib/scoring"
-
-const subjectOptions = [
-  ...aiModels.map((model) => ({ id: `model:${model.id}`, label: model.name, type: "Model" as const })),
-  ...aiAgents.map((agent) => ({ id: `agent:${agent.id}`, label: agent.name, type: "Agent" as const })),
-]
+import type { AiAgent, AiModel } from "@/lib/types"
 
 const defaultSelection = ["model:gpt-5-5", "model:claude-opus-sonnet", "agent:codex", "agent:claude-code"]
 
-export function CompareSelector() {
+type CompareSelectorProps = {
+  agents: AiAgent[]
+  models: AiModel[]
+}
+
+export function CompareSelector({ agents, models }: CompareSelectorProps) {
   const [selectedIds, setSelectedIds] = useState(defaultSelection)
+  const subjectOptions = useMemo(
+    () => [
+      ...models.map((model) => ({ id: `model:${model.id}`, label: model.name, type: "Model" as const })),
+      ...agents.map((agent) => ({ id: `agent:${agent.id}`, label: agent.name, type: "Agent" as const })),
+    ],
+    [agents, models]
+  )
 
   const subjects = useMemo(
     () =>
@@ -25,7 +32,7 @@ export function CompareSelector() {
         const [type, value] = id.split(":")
 
         if (type === "model") {
-          const model = aiModels.find((item) => item.id === value) ?? aiModels[0]
+          const model = models.find((item) => item.id === value) ?? models[0]
           return {
             id,
             name: model.name,
@@ -45,7 +52,7 @@ export function CompareSelector() {
           }
         }
 
-        const agent = aiAgents.find((item) => item.id === value) ?? aiAgents[0]
+        const agent = agents.find((item) => item.id === value) ?? agents[0]
         return {
           id,
           name: agent.name,
@@ -64,7 +71,7 @@ export function CompareSelector() {
           score: String(calculateAgentScore(agent)),
         }
       }),
-    [selectedIds]
+    [agents, models, selectedIds]
   )
 
   const rows = [

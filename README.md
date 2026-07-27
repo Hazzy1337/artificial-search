@@ -1,36 +1,193 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Artificial Search
 
-## Getting Started
+Artificial Search is a fullstack AI-stack marketplace and recommendation dashboard for developers.
 
-First, run the development server:
+## Problem
+
+Developers have many AI models, coding agents, MCP servers and workflow skill packs to choose from. The wrong combination can waste time, expose private files or produce weak results.
+
+## Solution
+
+Artificial Search compares seeded AI models, agents, MCP servers and coding skill packs, then recommends practical AI stacks for programming tasks. It includes a database-backed demo subscription flow and server-side gated skill pack manifest downloads.
+
+## Features
+
+- AI model leaderboard and filters
+- AI agent comparison
+- MCP server catalog with risk labels and permissions
+- Skill pack marketplace with Free, Premium and Pro access
+- Demo subscription flow backed by SQLite
+- Gated skill pack manifest downloads
+- Recommendation wizard with access warnings
+- QA test cases and smoke scripts
+- SEO metadata, sitemap and robots
+- Documentation pages for course presentation
+
+## Tech Stack
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Prisma
+- SQLite for local demo
+- Next API routes
+- Playwright Core for optional browser QA
+
+## Architecture
+
+```text
+Browser UI
+  -> Next.js page / client component
+  -> Next API route or server helper
+  -> Prisma Client
+  -> SQLite dev.db
+  -> JSON response or rendered UI
+```
+
+## Database
+
+Prisma models:
+
+- `User`
+- `AiModel`
+- `AiAgent`
+- `McpServer`
+- `SkillPack`
+- `QaTestCase`
+
+SQLite is used because the project must be easy to run locally for the AIT Fullstack course presentation.
+
+## API Routes
+
+- `GET /api/models`
+- `GET /api/agents`
+- `GET /api/mcp-servers`
+- `GET /api/skill-packs`
+- `GET /api/skill-packs/[id]`
+- `GET /api/skill-packs/[id]/manifest`
+- `GET /api/recommendations`
+- `GET /api/qa`
+- `GET /api/me`
+- `POST /api/subscription/change`
+
+## Subscription Demo
+
+There is one demo user:
+
+```text
+demo@artificial-search.com
+```
+
+Plans:
+
+- Free
+- Premium
+- Pro
+
+Pricing buttons call `POST /api/subscription/change` and persist the selected plan in SQLite. This is a demo subscription flow for the course project, not a real payment integration.
+
+## Security Notes
+
+Skill pack access is checked on the server. The UI lock state is not trusted.
+
+Access rules:
+
+- Free can access Free packs
+- Premium can access Free and Premium packs
+- Pro can access all packs
+
+MCP servers are labeled with status, risk level, permissions and risk notes. Unknown MCP servers can expose files, shell commands, APIs and private project data.
+
+## QA
+
+Run:
+
+```bash
+npm run lint
+npm run build
+npm run smoke
+npm run qa
+```
+
+`smoke` and `qa` can use Chrome, Edge or Chromium. Set `PLAYWRIGHT_CHROME_PATH` if the browser is not found automatically.
+
+## Local Setup
+
+```bash
+npm install
+cp .env.example .env
+```
+
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+## Seed Database
+
+```bash
+npm run db:generate
+npm run db:push
+npm run db:seed
+```
+
+## Run Project
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run Lint/Build/Smoke
 
-## Learn More
+```bash
+npm run lint
+npm run build
+npm run smoke
+npm run qa
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Vercel can deploy the Next.js app. SQLite is acceptable for the local course demo, but production should use Postgres.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Required environment variables:
 
-## Deploy on Vercel
+```env
+DATABASE_URL="file:./dev.db"
+NEXT_PUBLIC_APP_URL="https://artificial-search.com"
+DEMO_USER_EMAIL="demo@artificial-search.com"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For production:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- replace SQLite with Postgres;
+- set `NEXT_PUBLIC_APP_URL` to `https://artificial-search.com`;
+- configure the domain in Vercel;
+- add real auth and billing before accepting real users.
+
+## Presentation Notes
+
+In 2-3 minutes, show:
+
+1. Project name and problem.
+2. Model/agent/MCP/skill pages.
+3. Database seed and API route output.
+4. Pricing demo plan change.
+5. Locked Pro manifest returning `403` for Free user.
+6. QA page and `npm run qa`.
+7. One bug fixed: `View Pack` button and frontend-only skill locking.
+
+## Known Limitations
+
+- Seeded data, not live real-time rankings.
+- Demo subscription, not real Stripe.
+- Demo user, not OAuth.
+- SQLite is local-demo persistence.
+- MCP install commands are placeholders unless explicitly verified.

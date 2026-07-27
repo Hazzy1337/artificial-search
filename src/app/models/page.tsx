@@ -1,7 +1,18 @@
-import { ModelsExplorer } from "@/components/models/ModelsExplorer"
-import { aiModels } from "@/lib/data"
+import type { Metadata } from "next"
 
-export default function ModelsPage() {
+import { ModelsExplorer } from "@/components/models/ModelsExplorer"
+import { getCatalogModels } from "@/lib/catalog"
+
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "AI Models",
+  description: "Seeded AI model comparison for the Artificial Search course MVP.",
+}
+
+export default async function ModelsPage() {
+  const aiModels = await getCatalogModels()
+
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <PageIntro

@@ -4,6 +4,15 @@ export type ModelCategory = "closed" | "open" | "local"
 
 export type PriceLevel = "Low" | "Medium" | "High" | "Premium"
 
+export type PlanName = "Free" | "Premium" | "Pro"
+
+export type DemoUser = {
+  id: string
+  name: string
+  email: string
+  plan: PlanName
+}
+
 export type AiModel = {
   id: string
   name: string
@@ -58,6 +67,12 @@ export type McpCategory =
   | "Memory"
   | "Project Analyzer"
   | "Security / Sandbox"
+  | "UI"
+  | "Reasoning"
+  | "DevOps"
+  | "Network"
+
+export type CatalogStatus = "verified" | "community" | "placeholder" | "deprecated"
 
 export type McpServer = {
   id: string
@@ -67,9 +82,13 @@ export type McpServer = {
   compatibleWith: string[]
   riskLevel: RiskLevel
   setupDifficulty: "Easy" | "Medium" | "Hard"
-  access: "Free" | "Premium" | "Pro"
+  access: PlanName
   rating: number
   permissions: string[]
+  status: CatalogStatus
+  riskNotes: string[]
+  recommendedFor: string[]
+  sourceUrl?: string
   verifiedCommand?: {
     command: string
     args: string[]
@@ -77,7 +96,7 @@ export type McpServer = {
   isPlaceholder?: boolean
 }
 
-export type SkillPackTier = "Free" | "Premium" | "Pro"
+export type SkillPackTier = PlanName
 
 export type SkillPack = {
   id: string
@@ -88,8 +107,17 @@ export type SkillPack = {
   features: string[]
   tier: SkillPackTier
   compatibilityScore: number
-  locked: boolean
   highlighted?: boolean
+  sourceUrl?: string
+  status: CatalogStatus
+  riskNotes: string[]
+  recommendedFor: string[]
+}
+
+export type SkillPackAccessView = SkillPack & {
+  accessible: boolean
+  locked: boolean
+  requiredPlan: SkillPackTier
 }
 
 export type SkillPackInstallFile = {
@@ -167,6 +195,17 @@ export type PricingPlan = {
   description: string
   features: string[]
   cta: string
-  tier: SkillPackTier | "Business"
+  tier: PlanName | "Business"
   highlighted?: boolean
+}
+
+export type QaTestCase = {
+  id: string
+  title: string
+  area: string
+  steps: string[]
+  expected: string
+  status: string
+  severity: string
+  notes?: string
 }

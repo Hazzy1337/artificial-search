@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+  PRO
+}
+
+model AiModel {
+  id             String @id
+  name           String
+  provider       String
+  category       String
+  intelligence   Int
+  coding         Int
+  reasoning      Int
+  vision         Int
+  agentPower     Int
+  speed          Int
+  costEfficiency Int
+  contextWindow  String
+  contextTokens  Int
+  supportsVision Boolean
+  supportsTools  Boolean
+  priceLevel     String
+  strengthsJson  String
+  weaknessesJson String
+  bestForJson    String
+  trend          String
+  movement24h    Float
+}
+
+model AiAgent {
+  id                    String @id
+  name                  String
+  provider              String
+  taskSuccess           Int
+  codebaseUnderstanding Int
+  toolUse               Int
+  autonomy              Int
+  recoveryAfterError    Int
+  costEfficiency        Int
+  costLevel             String
+  bestForJson           String
+  weaknessesJson        String
+  notes                 String
+  trend                 String
+}
+
+model McpServer {
+  id              String  @id
+  name            String
+  category        String
+  description     String
+  compatibleJson  String
+  riskLevel       String
+  setupDifficulty String
+  access          Plan
+  rating          Int
+  permissionsJson String
+  sourceUrl       String?
+  status          String
+  riskNotesJson   String
+  recommendedJson String
+}
+
+model SkillPack {
+  id                 String  @id
+  name               String
+  summary            String
+  compatibleJson     String
+  insideJson         String
+  featuresJson       String
+  tier               Plan
+  compatibilityScore Int
+  highlighted        Boolean @default(false)
+  sourceUrl          String?
+  status             String
+  riskNotesJson      String
+  recommendedJson    String
+}
+
+model QaTestCase {
+  id        String  @id @default(cuid())
+  title     String
+  area      String
+  stepsJson String
+  expected  String
+  status    String
+  severity  String
+  notes     String?
+}

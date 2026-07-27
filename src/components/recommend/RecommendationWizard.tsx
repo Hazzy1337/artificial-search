@@ -10,11 +10,17 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { mcpServers, recommendations } from "@/lib/data"
 import { createDemoMcpConfig } from "@/lib/mcpConfig"
+import { canAccessSkillPack } from "@/lib/plans"
 import { findRecommendationByQuery, getRecommendedStack } from "@/lib/scoring"
-import type { RecommendationTask, RecommendedStack } from "@/lib/types"
+import type { PlanName, RecommendationTask, RecommendedStack, SkillPack } from "@/lib/types"
 import type { McpServer } from "@/lib/types"
 
-export function RecommendationWizard() {
+type RecommendationWizardProps = {
+  skillPacks: SkillPack[]
+  userPlan: PlanName
+}
+
+export function RecommendationWizard({ skillPacks, userPlan }: RecommendationWizardProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get("q") ?? ""
@@ -43,6 +49,8 @@ export function RecommendationWizard() {
     [stack]
   )
   const config = useMemo(() => createDemoMcpConfig(selectedServers), [selectedServers])
+  const recommendedPack = skillPacks.find((pack) => pack.name === stack.skillPack)
+  const recommendedPackAccessible = recommendedPack ? canAccessSkillPack(userPlan, recommendedPack) : false
 
   function selectStack(nextStack: RecommendedStack, nextQuery?: string) {
     setTask(nextStack.task)
@@ -123,7 +131,14 @@ export function RecommendationWizard() {
         <div className="grid gap-3 md:grid-cols-2">
           <StackField label="Recommended Model" value={stack.model} />
           <StackField label="Recommended Agent" value={stack.agent} />
-          <StackField label="Recommended Skill Pack" value={stack.skillPack} />
+          <StackField
+            label="Recommended Skill Pack"
+            value={
+              recommendedPack
+                ? `${stack.skillPack} (${recommendedPackAccessible ? "accessible" : `requires ${recommendedPack.tier}`})`
+                : `${stack.skillPack} (not found in catalog)`
+            }
+          />
           <StackField label="Recommended MCP Servers" value={selectedServers.map((server) => server.name).join(", ")} />
         </div>
         <div className="mt-4 rounded-lg border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
@@ -131,6 +146,11 @@ export function RecommendationWizard() {
             <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
             {stack.warning}
           </p>
+          {!recommendedPackAccessible && recommendedPack ? (
+            <p className="mt-2">
+              Demo user plan is {userPlan}. This skill pack requires {recommendedPack.tier}; upgrade before downloading its manifest.
+            </p>
+          ) : null}
         </div>
         <ResultList title="Why this stack" items={stack.reasoning} />
         <ResultList title="Alternatives" items={stack.alternatives} />

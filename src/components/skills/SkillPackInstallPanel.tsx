@@ -8,18 +8,23 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
 type SkillPackInstallPanelProps = {
-  locked: boolean
-  manifestJson: string
+  accessible: boolean
+  manifestJson?: string
   packId: string
+  requiredPlan: string
 }
 
-export function SkillPackInstallPanel({ locked, manifestJson, packId }: SkillPackInstallPanelProps) {
+export function SkillPackInstallPanel({ accessible, manifestJson, packId, requiredPlan }: SkillPackInstallPanelProps) {
   const [copied, setCopied] = useState(false)
   const fileName = `${packId}.skillpack.json`
   const installCommand = `node scripts/install-skill-pack.mjs ./${fileName}`
   const downloadHref = useMemo(
-    () => `data:application/json;charset=utf-8,${encodeURIComponent(manifestJson)}`,
-    [manifestJson]
+    () => `/api/skill-packs/${packId}/manifest`,
+    [packId]
+  )
+  const displayJson = useMemo(
+    () => manifestJson ?? JSON.stringify({ error: "Locked", requiredPlan }, null, 2),
+    [manifestJson, requiredPlan]
   )
 
   async function copyCommand() {
@@ -28,7 +33,7 @@ export function SkillPackInstallPanel({ locked, manifestJson, packId }: SkillPac
     window.setTimeout(() => setCopied(false), 1600)
   }
 
-  if (locked) {
+  if (!accessible) {
     return (
       <section className="luxury-panel rounded-lg p-5">
         <div className="flex items-center gap-2 text-stone-50">
@@ -38,6 +43,7 @@ export function SkillPackInstallPanel({ locked, manifestJson, packId }: SkillPac
         <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-400">
           This pack is locked. Unlock it first, then download the skillpack manifest and run the local installer.
         </p>
+        <p className="mt-2 text-sm text-amber-100">Required plan: {requiredPlan}</p>
         <Button asChild className="mt-4 w-full sm:w-fit" variant="outline">
           <Link href="/pricing">View Pricing</Link>
         </Button>
@@ -54,7 +60,7 @@ export function SkillPackInstallPanel({ locked, manifestJson, packId }: SkillPac
             <h2 className="text-lg font-semibold">Install Skill Pack</h2>
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-stone-400">
-            Download the skillpack manifest, run the installer from this project root, then restart Codex.
+            Download through the server-checked manifest API, run the installer from this project root, then restart Codex.
           </p>
         </div>
         <Button asChild className="w-full sm:w-fit">
@@ -87,7 +93,7 @@ export function SkillPackInstallPanel({ locked, manifestJson, packId }: SkillPac
         <Textarea
           className="min-h-96 border-amber-200/15 bg-black/35 font-mono text-xs text-stone-200"
           readOnly
-          value={manifestJson}
+          value={displayJson}
         />
       </div>
     </section>

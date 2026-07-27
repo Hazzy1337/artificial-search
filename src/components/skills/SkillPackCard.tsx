@@ -1,4 +1,4 @@
-import { Lock, Package, Unlock } from "lucide-react"
+import { Download, Lock, Package, Unlock } from "lucide-react"
 import Link from "next/link"
 
 import { PowerScoreBar } from "@/components/dashboard/PowerScoreBar"
@@ -6,10 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import type { SkillPack } from "@/lib/types"
+import type { SkillPackAccessView } from "@/lib/types"
 
 type SkillPackCardProps = {
-  pack: SkillPack
+  pack: SkillPackAccessView
 }
 
 export function SkillPackCard({ pack }: SkillPackCardProps) {
@@ -22,7 +22,6 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
         pack.highlighted && "border-amber-200/45 shadow-[0_28px_90px_rgba(231,200,115,0.14)]"
       )}
     >
-      {pack.locked ? <div className="pointer-events-none absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" /> : null}
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -32,29 +31,27 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
             </CardTitle>
             <p className="mt-1 text-sm text-stone-400">{pack.summary}</p>
           </div>
-          <Badge className="border-amber-300/30 bg-amber-300/10 text-amber-100" variant="outline">
+          <Badge className={pack.accessible ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-100" : "border-red-300/30 bg-red-300/10 text-red-100"} variant="outline">
             <LockIcon aria-hidden="true" className="size-3" />
-            {pack.tier}
+            {pack.accessible ? "Accessible" : "Locked"}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <Badge className="border-amber-300/30 bg-amber-300/10 text-amber-100" variant="outline">
+            Required plan: {pack.requiredPlan}
+          </Badge>
+          <Badge className="border-stone-300/20 bg-white/[0.055] text-stone-200" variant="outline">
+            {pack.status}
+          </Badge>
+        </div>
         <PowerScoreBar label="Compatibility" value={pack.compatibilityScore} />
         <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">For models</p>
+          <p className="mb-2 text-sm font-medium text-stone-200">Recommended for</p>
           <div className="flex flex-wrap gap-2">
-            {pack.compatibleModels.map((item) => (
+            {pack.recommendedFor.map((item) => (
               <Badge className="border-stone-300/20 text-stone-300" key={item} variant="outline">
-                {item}
-              </Badge>
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">Inside</p>
-          <div className="flex flex-wrap gap-2">
-            {pack.inside.map((item) => (
-              <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" key={item} variant="outline">
                 {item}
               </Badge>
             ))}
@@ -68,15 +65,23 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
             ))}
           </ul>
         </div>
-        {pack.locked ? (
-          <Button className="w-full" disabled variant="outline">
-            Locked
-          </Button>
-        ) : (
+        <div className="grid gap-2 sm:grid-cols-2">
           <Button asChild className="w-full">
             <Link href={`/skills/${pack.id}`}>View Pack</Link>
           </Button>
-        )}
+          {pack.accessible ? (
+            <Button asChild className="w-full" variant="outline">
+              <a href={`/api/skill-packs/${pack.id}/manifest`}>
+                <Download aria-hidden="true" className="size-4" />
+                Download Manifest
+              </a>
+            </Button>
+          ) : (
+            <Button asChild className="w-full" variant="outline">
+              <Link href={`/pricing?required=${pack.requiredPlan}`}>Upgrade</Link>
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   )

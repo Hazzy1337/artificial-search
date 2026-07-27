@@ -1,4 +1,5 @@
 import { Bot, Brain, Package, Puzzle, TrendingUp } from "lucide-react"
+import type { Metadata } from "next"
 
 import { HeroSection } from "@/components/dashboard/HeroSection"
 import { LeaderboardTable } from "@/components/dashboard/LeaderboardTable"
@@ -6,10 +7,20 @@ import { ScoreBadge } from "@/components/dashboard/ScoreBadge"
 import { TrendChart } from "@/components/dashboard/TrendChart"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { aiAgents, aiModels, mcpServers, powerIndexData, powerIndexSeries } from "@/lib/data"
+import { getCatalogAgents, getCatalogMcpServers, getCatalogModels } from "@/lib/catalog"
+import { powerIndexData, powerIndexSeries } from "@/lib/data"
 import { calculateAgentScore, calculateOverallScore, calculatePricePowerScore } from "@/lib/scoring"
+import { siteUrl } from "@/lib/site"
 
-export default function Home() {
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "Artificial Search",
+  description: "Course MVP AI-stack marketplace and recommendation dashboard with seeded data and demo subscription access.",
+}
+
+export default async function Home() {
+  const [aiModels, aiAgents, mcpServers] = await Promise.all([getCatalogModels(), getCatalogAgents(), getCatalogMcpServers()])
   const bestOverall = [...aiModels].sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a))[0]
   const bestCodingAgent = [...aiAgents].sort((a, b) => calculateAgentScore(b) - calculateAgentScore(a))[0]
   const bestPricePower = [...aiModels].sort((a, b) => calculatePricePowerScore(b) - calculatePricePowerScore(a))[0]
@@ -56,6 +67,26 @@ export default function Home() {
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+      <script
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": ["WebApplication", "SoftwareApplication"],
+            name: "Artificial Search",
+            applicationCategory: "DeveloperApplication",
+            operatingSystem: "Web",
+            url: siteUrl,
+            description:
+              "Course MVP AI-stack marketplace and recommendation dashboard with seeded demo data and subscription-gated skill pack manifests.",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "EUR",
+            },
+          }),
+        }}
+        type="application/ld+json"
+      />
       <HeroSection />
 
       <section className="space-y-4 py-6">

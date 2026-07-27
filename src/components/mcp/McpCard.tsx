@@ -1,4 +1,4 @@
-import { AlertTriangle, Puzzle, Shield } from "lucide-react"
+import { AlertTriangle, ExternalLink, Puzzle, Shield } from "lucide-react"
 
 import { ScoreBadge } from "@/components/dashboard/ScoreBadge"
 import { Badge } from "@/components/ui/badge"
@@ -45,20 +45,43 @@ export function McpCard({ server }: McpCardProps) {
           </Badge>
           <Badge
             className={
-              server.verifiedCommand && !server.isPlaceholder
+              server.status === "verified"
                 ? "border-cyan-300/30 bg-cyan-300/10 text-cyan-100"
+                : server.status === "placeholder"
+                  ? "border-amber-300/30 bg-amber-300/10 text-amber-100"
                 : "border-stone-300/20 bg-white/[0.055] text-stone-200"
             }
             variant="outline"
           >
-            {server.verifiedCommand && !server.isPlaceholder ? "Verified command" : "Demo placeholder"}
+            status: {server.status}
           </Badge>
         </div>
+        {server.sourceUrl ? (
+          <a
+            className="inline-flex items-center gap-1.5 text-sm text-cyan-100 transition-colors hover:text-cyan-50"
+            href={server.sourceUrl}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Source link
+            <ExternalLink aria-hidden="true" className="size-3.5" />
+          </a>
+        ) : null}
         <div>
           <p className="mb-2 text-sm font-medium text-stone-200">Compatible with</p>
           <div className="flex flex-wrap gap-2">
             {server.compatibleWith.map((item) => (
               <Badge className="border-stone-300/20 text-stone-300" key={item} variant="outline">
+                {item}
+              </Badge>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-medium text-stone-200">Recommended for</p>
+          <div className="flex flex-wrap gap-2">
+            {server.recommendedFor.map((item) => (
+              <Badge className="border-cyan-200/15 text-cyan-100" key={item} variant="outline">
                 {item}
               </Badge>
             ))}
@@ -71,6 +94,14 @@ export function McpCard({ server }: McpCardProps) {
           </p>
           <ul className="space-y-1 text-sm text-stone-400">
             {server.permissions.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-medium text-stone-200">Risk notes</p>
+          <ul className="space-y-1 text-sm text-stone-400">
+            {server.riskNotes.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>

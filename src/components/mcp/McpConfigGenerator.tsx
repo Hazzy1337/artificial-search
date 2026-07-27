@@ -7,12 +7,18 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { aiAgents, mcpServers, skillPacks } from "@/lib/data"
 import { createDemoMcpConfig } from "@/lib/mcpConfig"
+import type { AiAgent, McpServer, SkillPack } from "@/lib/types"
 
-export function McpConfigGenerator() {
-  const [agentId, setAgentId] = useState(aiAgents[0].id)
-  const [skillPackId, setSkillPackId] = useState(skillPacks.find((pack) => pack.highlighted)?.id ?? skillPacks[0].id)
+type McpConfigGeneratorProps = {
+  agents: AiAgent[]
+  mcpServers: McpServer[]
+  skillPacks: SkillPack[]
+}
+
+export function McpConfigGenerator({ agents, mcpServers, skillPacks }: McpConfigGeneratorProps) {
+  const [agentId, setAgentId] = useState(agents[0]?.id ?? "")
+  const [skillPackId, setSkillPackId] = useState(skillPacks.find((pack) => pack.highlighted)?.id ?? skillPacks[0]?.id ?? "")
   const [selectedServerIds, setSelectedServerIds] = useState(["codegraphcontext", "filesystem", "git"])
 
   const config = useMemo(() => {
@@ -23,14 +29,14 @@ export function McpConfigGenerator() {
       {
         notice:
           "Demo config - verify package names before installing. Artificial Search does not claim these placeholder commands are installable.",
-        agent: aiAgents.find((agent) => agent.id === agentId)?.name,
+        agent: agents.find((agent) => agent.id === agentId)?.name,
         skillPack: skillPacks.find((pack) => pack.id === skillPackId)?.name,
         mcpServers: demoConfig.mcpServers,
       },
       null,
       2
     )
-  }, [agentId, selectedServerIds, skillPackId])
+  }, [agentId, agents, mcpServers, selectedServerIds, skillPackId, skillPacks])
 
   function toggleServer(serverId: string, checked: boolean) {
     setSelectedServerIds((current) => {
@@ -60,7 +66,7 @@ export function McpConfigGenerator() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="border-amber-200/15 bg-[#08070b]">
-                {aiAgents.map((agent) => (
+                {agents.map((agent) => (
                   <SelectItem key={agent.id} value={agent.id}>
                     {agent.name}
                   </SelectItem>

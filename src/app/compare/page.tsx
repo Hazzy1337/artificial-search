@@ -1,6 +1,18 @@
-import { CompareSelector } from "@/components/compare/CompareSelector"
+import type { Metadata } from "next"
 
-export default function ComparePage() {
+import { CompareSelector } from "@/components/compare/CompareSelector"
+import { getCatalogAgents, getCatalogModels } from "@/lib/catalog"
+
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "Compare",
+  description: "Compare seeded AI models and agents by normalized demo scoring.",
+}
+
+export default async function ComparePage() {
+  const [models, agents] = await Promise.all([getCatalogModels(), getCatalogAgents()])
+
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <section className="space-y-2">
@@ -10,7 +22,7 @@ export default function ComparePage() {
           Select two to four subjects and compare intelligence, coding, agent power, speed, cost, context, vision and tool use.
         </p>
       </section>
-      <CompareSelector />
+      <CompareSelector agents={agents} models={models} />
     </main>
   )
 }

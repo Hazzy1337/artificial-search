@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 
-import { skillPacks } from "@/lib/data"
+import { getCatalogSkillPack } from "@/lib/catalog"
+import { getDemoUser } from "@/lib/demoUser"
+import { canAccessSkillPack } from "@/lib/plans"
 import { createSkillPackManifest } from "@/lib/skillPackManifest"
 
 type SkillPackManifestRouteContext = {
@@ -11,14 +13,21 @@ type SkillPackManifestRouteContext = {
 
 export async function GET(_request: Request, { params }: SkillPackManifestRouteContext) {
   const { id } = await params
-  const pack = skillPacks.find((item) => item.id === id)
+  const [user, pack] = await Promise.all([getDemoUser(), getCatalogSkillPack(id)])
 
   if (!pack) {
     return NextResponse.json({ error: "Skill pack not found" }, { status: 404 })
   }
 
-  if (pack.locked) {
-    return NextResponse.json({ error: "Skill pack is locked" }, { status: 403 })
+  if (!canAccessSkillPack(user.plan, pack)) {
+    return NextResponse.json(
+      {
+        error: "Skill pack is locked",
+        userPlan: user.plan,
+        requiredPlan: pack.tier,
+      },
+      { status: 403 }
+    )
   }
 
   return NextResponse.json(createSkillPackManifest(pack), {

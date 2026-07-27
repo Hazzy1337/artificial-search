@@ -1,10 +1,19 @@
 import { AgentCard } from "@/components/agents/AgentCard"
 import { ComparisonTable } from "@/components/compare/ComparisonTable"
 import { Badge } from "@/components/ui/badge"
-import { aiAgents } from "@/lib/data"
+import type { Metadata } from "next"
+import { getCatalogAgents } from "@/lib/catalog"
 import { calculateAgentScore } from "@/lib/scoring"
 
-export default function AgentsPage() {
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "AI Agents",
+  description: "Seeded AI agent comparison for coding workflows, tool use and recovery after errors.",
+}
+
+export default async function AgentsPage() {
+  const aiAgents = await getCatalogAgents()
   const columns = aiAgents.slice(0, 4).map((agent) => agent.name)
   const rows = [
     { metric: "Task Success", values: aiAgents.slice(0, 4).map((agent) => String(agent.taskSuccess)) },

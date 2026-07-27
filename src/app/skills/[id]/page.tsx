@@ -1,4 +1,5 @@
 import { ArrowLeft, CheckCircle2, Lock, Package, Sparkles, Unlock } from "lucide-react"
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -6,7 +7,9 @@ import { PowerScoreBar } from "@/components/dashboard/PowerScoreBar"
 import { SkillPackInstallPanel } from "@/components/skills/SkillPackInstallPanel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { skillPacks } from "@/lib/data"
+import { getCatalogSkillPack } from "@/lib/catalog"
+import { getDemoUser } from "@/lib/demoUser"
+import { withSkillPackAccess } from "@/lib/plans"
 import { createSkillPackManifestJson } from "@/lib/skillPackManifest"
 
 type SkillPackDetailPageProps = {
@@ -15,22 +18,24 @@ type SkillPackDetailPageProps = {
   }>
 }
 
-export function generateStaticParams() {
-  return skillPacks.map((pack) => ({
-    id: pack.id,
-  }))
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "Skill Pack Details",
+  description: "Skill pack details, demo entitlement state and gated manifest download for Artificial Search.",
 }
 
 export default async function SkillPackDetailPage({ params }: SkillPackDetailPageProps) {
   const { id } = await params
-  const pack = skillPacks.find((item) => item.id === id)
+  const [user, pack] = await Promise.all([getDemoUser(), getCatalogSkillPack(id)])
 
   if (!pack) {
     notFound()
   }
 
-  const StatusIcon = pack.locked ? Lock : Unlock
-  const manifestJson = createSkillPackManifestJson(pack)
+  const packView = withSkillPackAccess(user.plan, pack)
+  const StatusIcon = packView.locked ? Lock : Unlock
+  const manifestJson = packView.accessible ? createSkillPackManifestJson(packView) : undefined
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
@@ -45,10 +50,13 @@ export default async function SkillPackDetailPage({ params }: SkillPackDetailPag
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="border-amber-200/25 bg-amber-200/10 text-amber-100" variant="outline">
             <StatusIcon aria-hidden="true" className="size-3" />
-            {pack.locked ? "Locked" : "Available"}
+            {packView.locked ? "Locked" : "Available"}
           </Badge>
           <Badge className="border-stone-300/20 bg-white/[0.055] text-stone-200" variant="outline">
-            {pack.tier}
+            Required plan: {packView.requiredPlan}
+          </Badge>
+          <Badge className="border-cyan-200/25 bg-cyan-200/10 text-cyan-100" variant="outline">
+            Demo user: {user.plan}
           </Badge>
         </div>
 
@@ -58,13 +66,13 @@ export default async function SkillPackDetailPage({ params }: SkillPackDetailPag
               <Package aria-hidden="true" className="size-4" />
               Skill Pack
             </p>
-            <h1 className="mt-2 max-w-3xl text-3xl font-semibold text-stone-50 sm:text-4xl">{pack.name}</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300">{pack.summary}</p>
+            <h1 className="mt-2 max-w-3xl text-3xl font-semibold text-stone-50 sm:text-4xl">{packView.name}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-300">{packView.summary}</p>
           </div>
 
           <div className="rounded-lg border border-stone-300/15 bg-black/25 p-4">
-            <PowerScoreBar label="Compatibility" value={pack.compatibilityScore} />
-            {pack.locked ? (
+            <PowerScoreBar label="Compatibility" value={packView.compatibilityScore} />
+            {packView.locked ? (
               <Button asChild className="mt-4 w-full" variant="outline">
                 <Link href="/pricing">View Pricing</Link>
               </Button>
@@ -78,12 +86,17 @@ export default async function SkillPackDetailPage({ params }: SkillPackDetailPag
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
-        <DetailPanel title="Compatible Models" items={pack.compatibleModels} />
-        <DetailPanel title="Inside The Pack" items={pack.inside} />
-        <DetailPanel title="Included Workflows" items={pack.features} />
+        <DetailPanel title="Compatible Models" items={packView.compatibleModels} />
+        <DetailPanel title="Inside The Pack" items={packView.inside} />
+        <DetailPanel title="Included Workflows" items={packView.features} />
       </section>
 
-      <SkillPackInstallPanel locked={pack.locked} manifestJson={manifestJson} packId={pack.id} />
+      <SkillPackInstallPanel
+        accessible={packView.accessible}
+        manifestJson={manifestJson}
+        packId={packView.id}
+        requiredPlan={packView.requiredPlan}
+      />
 
       <section className="luxury-panel rounded-lg p-5">
         <div className="flex items-center gap-2 text-stone-50">

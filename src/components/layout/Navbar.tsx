@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Bot, Brain, CreditCard, GitCompare, Menu, Package, Puzzle, Sparkles, Stars } from "lucide-react"
@@ -12,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import type { DemoUser, PlanName } from "@/lib/types"
 
 const navItems = [
   { href: "/models", label: "Models", icon: Brain },
@@ -25,6 +27,42 @@ const navItems = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const [plan, setPlan] = useState<PlanName | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    async function loadUser() {
+      try {
+        const response = await fetch("/api/me")
+        if (!response.ok) {
+          return
+        }
+
+        const payload = (await response.json()) as { user: DemoUser }
+        if (active) {
+          setPlan(payload.user.plan)
+        }
+      } catch {
+        // The badge is non-critical; pages and API routes still enforce access server-side.
+      }
+    }
+
+    function handlePlanChanged(event: Event) {
+      const user = (event as CustomEvent<DemoUser>).detail
+      if (user?.plan) {
+        setPlan(user.plan)
+      }
+    }
+
+    loadUser()
+    window.addEventListener("artificial-search-plan-changed", handlePlanChanged)
+
+    return () => {
+      active = false
+      window.removeEventListener("artificial-search-plan-changed", handlePlanChanged)
+    }
+  }, [])
 
   return (
     <header className="sticky top-0 z-40 border-b border-amber-200/10 bg-black/45 backdrop-blur-2xl">
@@ -58,10 +96,23 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 sm:flex">
+          <Link
+            className="rounded-lg border border-cyan-200/20 bg-cyan-200/10 px-3 py-2 text-xs font-medium text-cyan-100"
+            href="/pricing"
+          >
+            Demo user: {plan ?? "..."}
+          </Link>
           <Button asChild className="border-amber-200/30 bg-white/5 text-amber-100 hover:bg-amber-200/10" variant="outline">
             <Link href="/recommend">Find Stack</Link>
           </Button>
         </div>
+
+        <Link
+          className="ml-auto rounded-lg border border-cyan-200/20 bg-cyan-200/10 px-2.5 py-2 text-xs font-medium text-cyan-100 sm:hidden"
+          href="/pricing"
+        >
+          {plan ?? "..."}
+        </Link>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="lg:hidden">

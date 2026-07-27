@@ -1,18 +1,24 @@
-import Link from "next/link"
-import { CheckCircle2, Lock } from "lucide-react"
+import { CheckCircle2, CreditCard, Lock } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { createCheckoutSessionPlaceholder } from "@/lib/billing"
 import { cn } from "@/lib/utils"
-import type { PricingPlan } from "@/lib/types"
+import type { PlanName, PricingPlan } from "@/lib/types"
 
 type PricingCardProps = {
+  currentPlan: PlanName
+  onChangePlan: (plan: PlanName) => void
+  pendingPlan: PlanName | null
   plan: PricingPlan
 }
 
-export function PricingCard({ plan }: PricingCardProps) {
+export function PricingCard({ currentPlan, onChangePlan, pendingPlan, plan }: PricingCardProps) {
+  const selectablePlan = getSelectablePlan(plan.tier)
+  const selectable = Boolean(selectablePlan)
+  const active = selectable && currentPlan === plan.tier
+  const pending = selectable && pendingPlan === plan.tier
+
   return (
     <Card className={cn("luxury-panel rounded-lg", plan.highlighted && "border-amber-200/45 shadow-[0_28px_90px_rgba(231,200,115,0.14)]")}>
       <CardHeader>
@@ -22,8 +28,8 @@ export function PricingCard({ plan }: PricingCardProps) {
             <p className="mt-2 text-2xl font-semibold text-stone-50">{plan.price}</p>
           </div>
           <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" variant="outline">
-            <Lock aria-hidden="true" className="size-3" />
-            {plan.tier}
+            {active ? <CreditCard aria-hidden="true" className="size-3" /> : <Lock aria-hidden="true" className="size-3" />}
+            {active ? "Active" : plan.tier}
           </Badge>
         </div>
         <p className="text-sm leading-6 text-stone-400">{plan.description}</p>
@@ -37,10 +43,28 @@ export function PricingCard({ plan }: PricingCardProps) {
             </li>
           ))}
         </ul>
-        <Button asChild className={cn("w-full", plan.highlighted && "bg-amber-300 text-stone-950 hover:bg-amber-200")}>
-          <Link href={createCheckoutSessionPlaceholder(plan.id)}>{plan.cta}</Link>
+        <Button
+          className={cn("w-full", plan.highlighted && "bg-amber-300 text-stone-950 hover:bg-amber-200")}
+          disabled={!selectable || active || pending}
+          onClick={() => {
+            if (selectablePlan) {
+              onChangePlan(selectablePlan)
+            }
+          }}
+          type="button"
+          variant={active || !selectable ? "outline" : "default"}
+        >
+          {pending ? "Updating..." : active ? "Current plan" : selectable ? plan.cta : "Contact sales later"}
         </Button>
       </CardContent>
     </Card>
   )
+}
+
+function getSelectablePlan(value: PricingPlan["tier"]): PlanName | null {
+  if (value === "Free" || value === "Premium" || value === "Pro") {
+    return value
+  }
+
+  return null
 }
