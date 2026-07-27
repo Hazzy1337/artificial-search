@@ -5,17 +5,19 @@ import type { DemoUser, PlanName } from "@/lib/types"
 const demoUserEmail = process.env.DEMO_USER_EMAIL ?? "demo@artificial-search.com"
 
 export async function getDemoUser(): Promise<DemoUser> {
-  const user = await db.user.upsert({
+  const existingUser = await db.user.findUnique({
     where: { email: demoUserEmail },
-    update: {
-      name: "Demo User",
-    },
-    create: {
-      name: "Demo User",
-      email: demoUserEmail,
-      plan: "FREE",
-    },
   })
+
+  const user =
+    existingUser ??
+    (await db.user.create({
+      data: {
+        name: "Demo User",
+        email: demoUserEmail,
+        plan: "FREE",
+      },
+    }))
 
   return {
     id: user.id,

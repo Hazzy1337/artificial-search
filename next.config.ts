@@ -1,7 +1,16 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  webpack(config, { dev }) {
+    if (dev) {
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: ["**/node_modules/**", "**/.next/**", "**/prisma/dev.db", "**/prisma/dev.db-*"],
+      }
+    }
 
-export default nextConfig;
+    return config
+  },
+}
+
+export default nextConfig
