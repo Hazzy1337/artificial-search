@@ -123,5 +123,5 @@ function roundScore(value: number) {
 }
 
 function normalizeSearchText(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/gi, " ").trim()
+  return value.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim()
 }

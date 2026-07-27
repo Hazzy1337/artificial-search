@@ -19,6 +19,7 @@ Artificial Search compares seeded AI models, agents, MCP servers and coding skil
 - Demo subscription flow backed by SQLite
 - Gated skill pack manifest downloads
 - Recommendation wizard with access warnings
+- English/Russian UI language switch
 - QA test cases and smoke scripts
 - SEO metadata, sitemap and robots
 - Documentation pages for course presentation
@@ -68,6 +69,7 @@ SQLite is used because the project must be easy to run locally for the AIT Fulls
 - `GET /api/recommendations`
 - `GET /api/qa`
 - `GET /api/me`
+- `POST /api/locale`
 - `POST /api/subscription/change`
 
 ## Subscription Demo

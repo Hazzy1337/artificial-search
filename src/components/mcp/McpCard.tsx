@@ -3,9 +3,12 @@ import { AlertTriangle, ExternalLink, Puzzle, Shield } from "lucide-react"
 import { ScoreBadge } from "@/components/dashboard/ScoreBadge"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { riskText, statusText, tr, tv } from "@/lib/i18n"
+import type { Locale } from "@/lib/i18n"
 import type { McpServer, RiskLevel } from "@/lib/types"
 
 type McpCardProps = {
+  locale?: Locale
   server: McpServer
 }
 
@@ -15,7 +18,7 @@ const riskClass: Record<RiskLevel, string> = {
   High: "border-red-400/30 bg-red-400/10 text-red-100",
 }
 
-export function McpCard({ server }: McpCardProps) {
+export function McpCard({ locale = "en", server }: McpCardProps) {
   return (
     <Card className="luxury-panel rounded-lg">
       <CardHeader>
@@ -35,10 +38,10 @@ export function McpCard({ server }: McpCardProps) {
         <div className="flex flex-wrap gap-2">
           <Badge className={riskClass[server.riskLevel]} variant="outline">
             <AlertTriangle aria-hidden="true" className="size-3" />
-            {server.riskLevel} risk
+            {riskText(locale, server.riskLevel)} {tr(locale, "risk", "риск")}
           </Badge>
           <Badge className="border-stone-300/20 text-stone-300" variant="outline">
-            {server.setupDifficulty} setup
+            {tv(locale, server.setupDifficulty)} {tr(locale, "setup", "настройка")}
           </Badge>
           <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" variant="outline">
             {server.access}
@@ -53,7 +56,7 @@ export function McpCard({ server }: McpCardProps) {
             }
             variant="outline"
           >
-            status: {server.status}
+            {tr(locale, "status", "статус")}: {statusText(locale, server.status)}
           </Badge>
         </div>
         {server.sourceUrl ? (
@@ -63,12 +66,12 @@ export function McpCard({ server }: McpCardProps) {
             rel="noreferrer"
             target="_blank"
           >
-            Source link
+            {tr(locale, "Source link", "Ссылка на источник")}
             <ExternalLink aria-hidden="true" className="size-3.5" />
           </a>
         ) : null}
         <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">Compatible with</p>
+          <p className="mb-2 text-sm font-medium text-stone-200">{tr(locale, "Compatible with", "Совместимо с")}</p>
           <div className="flex flex-wrap gap-2">
             {server.compatibleWith.map((item) => (
               <Badge className="border-stone-300/20 text-stone-300" key={item} variant="outline">
@@ -78,7 +81,7 @@ export function McpCard({ server }: McpCardProps) {
           </div>
         </div>
         <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">Recommended for</p>
+          <p className="mb-2 text-sm font-medium text-stone-200">{tr(locale, "Recommended for", "Рекомендуется для")}</p>
           <div className="flex flex-wrap gap-2">
             {server.recommendedFor.map((item) => (
               <Badge className="border-cyan-200/15 text-cyan-100" key={item} variant="outline">
@@ -90,7 +93,7 @@ export function McpCard({ server }: McpCardProps) {
         <div>
           <p className="mb-2 flex items-center gap-1.5 text-sm font-medium text-stone-200">
             <Shield aria-hidden="true" className="size-4" />
-            Permissions
+            {tr(locale, "Permissions", "Permissions")}
           </p>
           <ul className="space-y-1 text-sm text-stone-400">
             {server.permissions.map((item) => (
@@ -99,7 +102,7 @@ export function McpCard({ server }: McpCardProps) {
           </ul>
         </div>
         <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">Risk notes</p>
+          <p className="mb-2 text-sm font-medium text-stone-200">{tr(locale, "Risk notes", "Заметки по рискам")}</p>
           <ul className="space-y-1 text-sm text-stone-400">
             {server.riskNotes.map((item) => (
               <li key={item}>{item}</li>

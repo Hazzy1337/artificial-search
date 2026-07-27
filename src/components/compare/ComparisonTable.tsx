@@ -6,21 +6,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { tr } from "@/lib/i18n"
+import type { Locale } from "@/lib/i18n"
 
 type ComparisonTableProps = {
   columns: string[]
+  locale?: Locale
   rows: Array<{
     metric: string
     values: string[]
   }>
 }
 
-export function ComparisonTable({ columns, rows }: ComparisonTableProps) {
+export function ComparisonTable({ columns, locale = "en", rows }: ComparisonTableProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow className="border-amber-200/10 hover:bg-transparent">
-          <TableHead>Metric</TableHead>
+          <TableHead>{tr(locale, "Metric", "Метрика")}</TableHead>
           {columns.map((column) => (
             <TableHead className="min-w-40" key={column}>
               {column}

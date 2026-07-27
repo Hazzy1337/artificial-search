@@ -9,18 +9,28 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { mcpServers, recommendations } from "@/lib/data"
+import {
+  recommendationAlternatives,
+  recommendationKeywords,
+  recommendationLabel,
+  recommendationReasoning,
+  recommendationWarning,
+  tr,
+} from "@/lib/i18n"
 import { createDemoMcpConfig } from "@/lib/mcpConfig"
 import { canAccessSkillPack } from "@/lib/plans"
 import { findRecommendationByQuery, getRecommendedStack } from "@/lib/scoring"
+import type { Locale } from "@/lib/i18n"
 import type { PlanName, RecommendationTask, RecommendedStack, SkillPack } from "@/lib/types"
 import type { McpServer } from "@/lib/types"
 
 type RecommendationWizardProps = {
+  locale: Locale
   skillPacks: SkillPack[]
   userPlan: PlanName
 }
 
-export function RecommendationWizard({ skillPacks, userPlan }: RecommendationWizardProps) {
+export function RecommendationWizard({ locale, skillPacks, userPlan }: RecommendationWizardProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get("q") ?? ""
@@ -75,10 +85,10 @@ export function RecommendationWizard({ skillPacks, userPlan }: RecommendationWiz
         <div className="luxury-panel rounded-lg p-4">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-stone-50">
             <Sparkles aria-hidden="true" className="size-5 text-cyan-200" />
-            Search for an AI stack
+            {tr(locale, "Search for an AI stack", "Поиск AI стека")}
           </h2>
           <p className="mt-2 text-sm leading-6 text-stone-400">
-            MVP keyword matching. No external AI API is called.
+            {tr(locale, "MVP keyword matching. No external AI API is called.", "MVP-подбор по ключевым словам. Внешний AI API не вызывается.")}
           </p>
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
             <Input
@@ -89,12 +99,16 @@ export function RecommendationWizard({ skillPacks, userPlan }: RecommendationWiz
                   submitSearch()
                 }
               }}
-              placeholder="What do you want AI to do? Example: Fix bugs in a large Next.js codebase"
+              placeholder={tr(
+                locale,
+                "What do you want AI to do? Example: Fix bugs in a large Next.js codebase",
+                "Что должен сделать AI? Например: исправить баги в большом Next.js проекте"
+              )}
               value={query}
             />
             <Button className="h-11 bg-cyan-200 text-stone-950 hover:bg-cyan-100" onClick={submitSearch}>
               <Search aria-hidden="true" />
-              Search
+              {tr(locale, "Search", "Найти")}
             </Button>
           </div>
         </div>
@@ -111,8 +125,8 @@ export function RecommendationWizard({ skillPacks, userPlan }: RecommendationWiz
               onClick={() => selectStack(item)}
               type="button"
             >
-              <span className="font-medium">{item.label}</span>
-              <span className="mt-1 block text-xs text-stone-500">{item.keywords.slice(0, 3).join(", ")}</span>
+              <span className="font-medium">{recommendationLabel(locale, item)}</span>
+              <span className="mt-1 block text-xs text-stone-500">{recommendationKeywords(locale, item).slice(0, 3).join(", ")}</span>
             </button>
           ))}
         </div>
@@ -121,44 +135,56 @@ export function RecommendationWizard({ skillPacks, userPlan }: RecommendationWiz
       <div className="luxury-panel rounded-lg p-4">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold text-stone-50">{stack.label}</h3>
-            <p className="mt-1 text-sm text-stone-400">Recommended stack preview</p>
+            <h3 className="text-lg font-semibold text-stone-50">{recommendationLabel(locale, stack)}</h3>
+            <p className="mt-1 text-sm text-stone-400">{tr(locale, "Recommended stack preview", "Предпросмотр рекомендуемого стека")}</p>
           </div>
           <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" variant="outline">
-            MVP recommendation logic
+            {tr(locale, "MVP recommendation logic", "MVP-логика рекомендаций")}
           </Badge>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
-          <StackField label="Recommended Model" value={stack.model} />
-          <StackField label="Recommended Agent" value={stack.agent} />
+          <StackField label={tr(locale, "Recommended Model", "Рекомендуемая модель")} value={stack.model} />
+          <StackField label={tr(locale, "Recommended Agent", "Рекомендуемый агент")} value={stack.agent} />
           <StackField
-            label="Recommended Skill Pack"
+            label={tr(locale, "Recommended Skill Pack", "Рекомендуемый skill pack")}
             value={
               recommendedPack
-                ? `${stack.skillPack} (${recommendedPackAccessible ? "accessible" : `requires ${recommendedPack.tier}`})`
-                : `${stack.skillPack} (not found in catalog)`
+                ? `${stack.skillPack} (${
+                    recommendedPackAccessible
+                      ? tr(locale, "accessible", "доступен")
+                      : `${tr(locale, "requires", "нужен тариф")} ${recommendedPack.tier}`
+                  })`
+                : `${stack.skillPack} (${tr(locale, "not found in catalog", "не найден в каталоге")})`
             }
           />
-          <StackField label="Recommended MCP Servers" value={selectedServers.map((server) => server.name).join(", ")} />
+          <StackField label={tr(locale, "Recommended MCP Servers", "Рекомендуемые MCP серверы")} value={selectedServers.map((server) => server.name).join(", ")} />
         </div>
         <div className="mt-4 rounded-lg border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
           <p className="flex items-start gap-2">
             <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-            {stack.warning}
+            {recommendationWarning(locale, stack)}
           </p>
           {!recommendedPackAccessible && recommendedPack ? (
             <p className="mt-2">
-              Demo user plan is {userPlan}. This skill pack requires {recommendedPack.tier}; upgrade before downloading its manifest.
+              {tr(
+                locale,
+                `Demo user plan is ${userPlan}. This skill pack requires ${recommendedPack.tier}; upgrade before downloading its manifest.`,
+                `Тариф demo user: ${userPlan}. Этому skill pack нужен ${recommendedPack.tier}; улучши тариф перед скачиванием manifest.`
+              )}
             </p>
           ) : null}
         </div>
-        <ResultList title="Why this stack" items={stack.reasoning} />
-        <ResultList title="Alternatives" items={stack.alternatives} />
+        <ResultList title={tr(locale, "Why this stack", "Почему этот стек")} items={recommendationReasoning(locale, stack)} />
+        <ResultList title={tr(locale, "Alternatives", "Альтернативы")} items={recommendationAlternatives(locale, stack)} />
         <div className="mt-4 space-y-2">
           <div>
-            <p className="text-sm font-medium text-stone-200">Generated demo mcp.json</p>
+            <p className="text-sm font-medium text-stone-200">{tr(locale, "Generated demo mcp.json", "Сгенерированный demo mcp.json")}</p>
             <p className="mt-1 text-xs text-stone-500">
-              Demo config - verify package names before installing. Placeholder commands are not installable claims.
+              {tr(
+                locale,
+                "Demo config - verify package names before installing. Placeholder commands are not installable claims.",
+                "Демо-конфиг - проверь package names перед установкой. Placeholder-команды не являются installable claims."
+              )}
             </p>
           </div>
           <Textarea className="min-h-64 border-cyan-200/15 bg-black/35 font-mono text-xs text-stone-200" readOnly value={config} />

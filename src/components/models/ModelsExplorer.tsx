@@ -7,27 +7,30 @@ import { LeaderboardTable } from "@/components/dashboard/LeaderboardTable"
 import { ModelCard } from "@/components/models/ModelCard"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { tr } from "@/lib/i18n"
 import type { ModelSortCategory } from "@/lib/scoring"
 import { sortByCategory } from "@/lib/scoring"
+import type { Locale } from "@/lib/i18n"
 import type { AiModel } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 type ModelsExplorerProps = {
+  locale: Locale
   models: AiModel[]
 }
 
-const filters: Array<{ label: string; value: ModelSortCategory }> = [
-  { label: "Overall", value: "overall" },
-  { label: "Coding", value: "coding" },
-  { label: "Reasoning", value: "reasoning" },
-  { label: "Vision", value: "vision" },
-  { label: "Long Context", value: "long-context" },
-  { label: "Cheap", value: "cheap" },
-  { label: "Fast", value: "fast" },
-  { label: "Open Source", value: "open-source" },
+const filters: Array<{ labelEn: string; labelRu: string; value: ModelSortCategory }> = [
+  { labelEn: "Overall", labelRu: "Общий", value: "overall" },
+  { labelEn: "Coding", labelRu: "Кодинг", value: "coding" },
+  { labelEn: "Reasoning", labelRu: "Reasoning", value: "reasoning" },
+  { labelEn: "Vision", labelRu: "Зрение", value: "vision" },
+  { labelEn: "Long Context", labelRu: "Длинный контекст", value: "long-context" },
+  { labelEn: "Cheap", labelRu: "Бюджетные", value: "cheap" },
+  { labelEn: "Fast", labelRu: "Быстрые", value: "fast" },
+  { labelEn: "Open Source", labelRu: "Open Source", value: "open-source" },
 ]
 
-export function ModelsExplorer({ models }: ModelsExplorerProps) {
+export function ModelsExplorer({ locale, models }: ModelsExplorerProps) {
   const [filter, setFilter] = useState<ModelSortCategory>("overall")
   const visibleModels = useMemo(() => sortByCategory(models, filter), [filter, models])
 
@@ -38,12 +41,14 @@ export function ModelsExplorer({ models }: ModelsExplorerProps) {
           <div>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-stone-50">
               <SlidersHorizontal aria-hidden="true" className="size-5 text-amber-200" />
-              Model filters
+              {tr(locale, "Model filters", "Фильтры моделей")}
             </h2>
-            <p className="mt-1 text-sm text-stone-400">Sort and narrow the demo model board by task profile.</p>
+            <p className="mt-1 text-sm text-stone-400">
+              {tr(locale, "Sort and narrow the demo model board by task profile.", "Сортируй демо-рейтинг моделей под профиль задачи.")}
+            </p>
           </div>
           <Badge className="border-amber-300/30 bg-amber-300/10 text-amber-100" variant="outline">
-            Demo data
+            {tr(locale, "Demo data", "Демо-данные")}
           </Badge>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -58,7 +63,7 @@ export function ModelsExplorer({ models }: ModelsExplorerProps) {
               size="sm"
               variant="outline"
             >
-              {item.label}
+              {tr(locale, item.labelEn, item.labelRu)}
             </Button>
           ))}
         </div>
@@ -66,13 +71,13 @@ export function ModelsExplorer({ models }: ModelsExplorerProps) {
 
       <div className="grid gap-4 xl:grid-cols-2">
         {visibleModels.map((model) => (
-          <ModelCard key={model.id} model={model} />
+          <ModelCard key={model.id} locale={locale} model={model} />
         ))}
       </div>
 
       <div className="luxury-panel rounded-lg p-4">
-        <h2 className="mb-4 text-lg font-semibold text-stone-50">Filtered table</h2>
-        <LeaderboardTable models={visibleModels} preserveOrder />
+        <h2 className="mb-4 text-lg font-semibold text-stone-50">{tr(locale, "Filtered table", "Отфильтрованная таблица")}</h2>
+        <LeaderboardTable locale={locale} models={visibleModels} preserveOrder />
       </div>
     </div>
   )

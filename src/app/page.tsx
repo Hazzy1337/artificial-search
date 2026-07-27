@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getCatalogAgents, getCatalogMcpServers, getCatalogModels } from "@/lib/catalog"
 import { powerIndexData, powerIndexSeries } from "@/lib/data"
+import { priceLevelText, tr } from "@/lib/i18n"
+import { getCurrentLocale } from "@/lib/i18nServer"
 import { calculateAgentScore, calculateOverallScore, calculatePricePowerScore } from "@/lib/scoring"
 import { siteUrl } from "@/lib/site"
 
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
+  const locale = await getCurrentLocale()
   const [aiModels, aiAgents, mcpServers] = await Promise.all([getCatalogModels(), getCatalogAgents(), getCatalogMcpServers()])
   const bestOverall = [...aiModels].sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a))[0]
   const bestCodingAgent = [...aiAgents].sort((a, b) => calculateAgentScore(b) - calculateAgentScore(a))[0]
@@ -29,37 +32,37 @@ export default async function Home() {
 
   const leaders = [
     {
-      title: "Best Overall Model",
+      title: tr(locale, "Best Overall Model", "Лучшая модель"),
       value: bestOverall.name,
       detail: bestOverall.provider,
       score: calculateOverallScore(bestOverall),
       icon: Brain,
     },
     {
-      title: "Best Coding Agent",
+      title: tr(locale, "Best Coding Agent", "Лучший coding-агент"),
       value: bestCodingAgent.name,
       detail: bestCodingAgent.provider,
       score: calculateAgentScore(bestCodingAgent),
       icon: Bot,
     },
     {
-      title: "Best Price/Power",
+      title: tr(locale, "Best Price/Power", "Лучшая цена/мощность"),
       value: bestPricePower.name,
-      detail: bestPricePower.priceLevel,
+      detail: priceLevelText(locale, bestPricePower.priceLevel),
       score: calculatePricePowerScore(bestPricePower),
       icon: TrendingUp,
     },
     {
-      title: "Best MCP Stack",
+      title: tr(locale, "Best MCP Stack", "Лучший MCP стек"),
       value: bestMcpStack.name,
       detail: bestMcpStack.category,
       score: bestMcpStack.rating,
       icon: Puzzle,
     },
     {
-      title: "Biggest Mover 24h",
+      title: tr(locale, "Biggest Mover 24h", "Главный рост за 24ч"),
       value: biggestMover.name,
-      detail: `${biggestMover.movement24h > 0 ? "+" : ""}${biggestMover.movement24h}% demo delta`,
+      detail: `${biggestMover.movement24h > 0 ? "+" : ""}${biggestMover.movement24h}% ${tr(locale, "demo delta", "демо-изменение")}`,
       score: calculateOverallScore(biggestMover),
       icon: Package,
     },
@@ -87,16 +90,18 @@ export default async function Home() {
         }}
         type="application/ld+json"
       />
-      <HeroSection />
+      <HeroSection key={locale} locale={locale} />
 
       <section className="space-y-4 py-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-semibold text-stone-50">Prototype leaders</h2>
-            <p className="mt-1 text-sm text-stone-400">Demo leaders across models, agents, MCP and movement signals. Not real-time yet.</p>
+            <h2 className="text-2xl font-semibold text-stone-50">{tr(locale, "Prototype leaders", "Лидеры прототипа")}</h2>
+            <p className="mt-1 text-sm text-stone-400">
+              {tr(locale, "Demo leaders across models, agents, MCP and movement signals. Not real-time yet.", "Демо-лидеры по моделям, агентам, MCP и сигналам изменения. Это ещё не real-time.")}
+            </p>
           </div>
           <Badge className="border-amber-200/30 bg-amber-200/10 text-amber-100" variant="outline">
-            Demo data
+            {tr(locale, "Demo data", "Демо-данные")}
           </Badge>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -124,33 +129,40 @@ export default async function Home() {
       <section className="grid gap-4 py-6 xl:grid-cols-[minmax(380px,0.85fr)_minmax(0,1.65fr)]">
         <div className="luxury-panel min-w-0 rounded-lg p-4">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-stone-50">Demo Intelligence Index Over Time</h2>
-            <p className="mt-1 text-sm text-stone-400">Mock weekly trend, normalized to a 0-100 demo index.</p>
+            <h2 className="text-xl font-semibold text-stone-50">{tr(locale, "Demo Intelligence Index Over Time", "Демо-индекс интеллекта по времени")}</h2>
+            <p className="mt-1 text-sm text-stone-400">{tr(locale, "Mock weekly trend, normalized to a 0-100 demo index.", "Тестовый недельный тренд, нормализованный в демо-индекс 0-100.")}</p>
           </div>
           <TrendChart data={powerIndexData} series={powerIndexSeries} />
         </div>
         <div className="luxury-panel min-w-0 rounded-lg p-4">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-stone-50">Top AI Models in Prototype Scoring</h2>
-            <p className="mt-1 text-sm text-stone-400">Ranked by the demo scoring formula from the task file.</p>
+            <h2 className="text-xl font-semibold text-stone-50">{tr(locale, "Top AI Models in Prototype Scoring", "Топ AI моделей по демо-оценке")}</h2>
+            <p className="mt-1 text-sm text-stone-400">{tr(locale, "Ranked by the demo scoring formula from the task file.", "Рейтинг по демо-формуле оценки из задания.")}</p>
           </div>
-          <LeaderboardTable models={aiModels} />
+          <LeaderboardTable locale={locale} models={aiModels} />
         </div>
       </section>
 
       <section className="py-6">
         <div className="luxury-panel rounded-lg p-5">
-          <h2 className="text-2xl font-semibold text-stone-50">Not just a leaderboard</h2>
+          <h2 className="text-2xl font-semibold text-stone-50">{tr(locale, "Not just a leaderboard", "Не просто рейтинг")}</h2>
           <p className="mt-3 max-w-4xl text-sm leading-6 text-stone-300">
-            Artificial Search compares models, AI agents, MCP servers, skill packs and concrete workflows. A model can be strong in
-            reasoning but weak as an agent host; an agent can use tools well but need a safer MCP permission profile; a
-            workflow can need a focused pack like Large Codebase Refactor or Business Document Agent Pack rather than a generic prompt.
+            {tr(
+              locale,
+              "Artificial Search compares models, AI agents, MCP servers, skill packs and concrete workflows. A model can be strong in reasoning but weak as an agent host; an agent can use tools well but need a safer MCP permission profile; a workflow can need a focused pack rather than a generic prompt.",
+              "Artificial Search сравнивает модели, AI-агентов, MCP серверы, наборы скиллов и конкретные рабочие процессы. Модель может быть сильной в reasoning, но слабой как host для агента; агент может хорошо использовать tools, но требовать более безопасный профиль MCP-доступов; workflow может требовать точный набор скиллов, а не общий prompt."
+            )}
           </p>
           <div className="mt-5 grid gap-3 md:grid-cols-4">
-            {["Models", "Agents", "MCP risk", "Skill packs"].map((item) => (
-              <div className="rounded-lg border border-amber-200/10 bg-white/[0.045] p-4" key={item}>
-                <p className="font-medium text-stone-100">{item}</p>
-                <p className="mt-2 text-sm text-stone-400">Demo scoring, filters and practical fit signals.</p>
+            {[
+              [tr(locale, "Models", "Модели"), tr(locale, "Demo scoring, filters and practical fit signals.", "Демо-оценка, фильтры и сигналы практической пригодности.")],
+              [tr(locale, "Agents", "Агенты"), tr(locale, "Demo scoring, filters and practical fit signals.", "Демо-оценка, фильтры и сигналы практической пригодности.")],
+              [tr(locale, "MCP risk", "Риски MCP"), tr(locale, "Demo scoring, filters and practical fit signals.", "Демо-оценка, фильтры и сигналы практической пригодности.")],
+              [tr(locale, "Skill packs", "Наборы скиллов"), tr(locale, "Demo scoring, filters and practical fit signals.", "Демо-оценка, фильтры и сигналы практической пригодности.")],
+            ].map(([title, description]) => (
+              <div className="rounded-lg border border-amber-200/10 bg-white/[0.045] p-4" key={title}>
+                <p className="font-medium text-stone-100">{title}</p>
+                <p className="mt-2 text-sm text-stone-400">{description}</p>
               </div>
             ))}
           </div>

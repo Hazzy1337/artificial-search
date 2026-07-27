@@ -9,31 +9,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { tr } from "@/lib/i18n"
 import { calculateOverallScore } from "@/lib/scoring"
+import type { Locale } from "@/lib/i18n"
 import type { AiModel } from "@/lib/types"
 
 type LeaderboardTableProps = {
+  locale?: Locale
   models: AiModel[]
   preserveOrder?: boolean
 }
 
-export function LeaderboardTable({ models, preserveOrder }: LeaderboardTableProps) {
+export function LeaderboardTable({ locale = "en", models, preserveOrder }: LeaderboardTableProps) {
   const sorted = preserveOrder ? models : [...models].sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a))
 
   return (
     <Table>
       <TableHeader>
         <TableRow className="border-amber-200/10 hover:bg-transparent">
-          <TableHead>Rank</TableHead>
-          <TableHead>Model</TableHead>
-          <TableHead>Provider</TableHead>
-          <TableHead>Intelligence</TableHead>
-          <TableHead>Coding</TableHead>
-          <TableHead>Agent Power</TableHead>
-          <TableHead>Speed</TableHead>
-          <TableHead>Cost Efficiency</TableHead>
-          <TableHead>Context</TableHead>
-          <TableHead>Overall Score</TableHead>
+          <TableHead>{tr(locale, "Rank", "Место")}</TableHead>
+          <TableHead>{tr(locale, "Model", "Модель")}</TableHead>
+          <TableHead>{tr(locale, "Provider", "Провайдер")}</TableHead>
+          <TableHead>{tr(locale, "Intelligence", "Интеллект")}</TableHead>
+          <TableHead>{tr(locale, "Coding", "Кодинг")}</TableHead>
+          <TableHead>{tr(locale, "Agent Power", "Сила агента")}</TableHead>
+          <TableHead>{tr(locale, "Speed", "Скорость")}</TableHead>
+          <TableHead>{tr(locale, "Cost Efficiency", "Эффективность цены")}</TableHead>
+          <TableHead>{tr(locale, "Context", "Контекст")}</TableHead>
+          <TableHead>{tr(locale, "Overall Score", "Общая оценка")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

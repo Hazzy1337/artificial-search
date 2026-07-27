@@ -5,14 +5,17 @@ import { PowerScoreBar } from "@/components/dashboard/PowerScoreBar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { statusText, tr } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
+import type { Locale } from "@/lib/i18n"
 import type { SkillPackAccessView } from "@/lib/types"
 
 type SkillPackCardProps = {
+  locale: Locale
   pack: SkillPackAccessView
 }
 
-export function SkillPackCard({ pack }: SkillPackCardProps) {
+export function SkillPackCard({ locale, pack }: SkillPackCardProps) {
   const LockIcon = pack.locked ? Lock : Unlock
 
   return (
@@ -33,22 +36,22 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
           </div>
           <Badge className={pack.accessible ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-100" : "border-red-300/30 bg-red-300/10 text-red-100"} variant="outline">
             <LockIcon aria-hidden="true" className="size-3" />
-            {pack.accessible ? "Accessible" : "Locked"}
+            {pack.accessible ? tr(locale, "Accessible", "Доступен") : tr(locale, "Locked", "Закрыт")}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
           <Badge className="border-amber-300/30 bg-amber-300/10 text-amber-100" variant="outline">
-            Required plan: {pack.requiredPlan}
+            {tr(locale, "Required plan", "Нужный тариф")}: {pack.requiredPlan}
           </Badge>
           <Badge className="border-stone-300/20 bg-white/[0.055] text-stone-200" variant="outline">
-            {pack.status}
+            {statusText(locale, pack.status)}
           </Badge>
         </div>
-        <PowerScoreBar label="Compatibility" value={pack.compatibilityScore} />
+        <PowerScoreBar label={tr(locale, "Compatibility", "Совместимость")} value={pack.compatibilityScore} />
         <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">Recommended for</p>
+          <p className="mb-2 text-sm font-medium text-stone-200">{tr(locale, "Recommended for", "Рекомендуется для")}</p>
           <div className="flex flex-wrap gap-2">
             {pack.recommendedFor.map((item) => (
               <Badge className="border-stone-300/20 text-stone-300" key={item} variant="outline">
@@ -58,7 +61,7 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
           </div>
         </div>
         <div>
-          <p className="mb-2 text-sm font-medium text-stone-200">Features</p>
+          <p className="mb-2 text-sm font-medium text-stone-200">{tr(locale, "Features", "Возможности")}</p>
           <ul className="grid gap-1 text-sm text-stone-400 sm:grid-cols-2">
             {pack.features.map((item) => (
               <li key={item}>{item}</li>
@@ -67,18 +70,18 @@ export function SkillPackCard({ pack }: SkillPackCardProps) {
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
           <Button asChild className="w-full">
-            <Link href={`/skills/${pack.id}`}>View Pack</Link>
+            <Link href={`/skills/${pack.id}`}>{tr(locale, "View Pack", "Открыть пак")}</Link>
           </Button>
           {pack.accessible ? (
             <Button asChild className="w-full" variant="outline">
               <a href={`/api/skill-packs/${pack.id}/manifest`}>
                 <Download aria-hidden="true" className="size-4" />
-                Download Manifest
+                {tr(locale, "Download Manifest", "Скачать manifest")}
               </a>
             </Button>
           ) : (
             <Button asChild className="w-full" variant="outline">
-              <Link href={`/pricing?required=${pack.requiredPlan}`}>Upgrade</Link>
+              <Link href={`/pricing?required=${pack.requiredPlan}`}>{tr(locale, "Upgrade", "Улучшить тариф")}</Link>
             </Button>
           )}
         </div>

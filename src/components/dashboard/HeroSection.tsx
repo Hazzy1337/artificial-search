@@ -7,19 +7,26 @@ import { ArrowRight, Search, Sparkles } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { recommendationLabel, tr } from "@/lib/i18n"
 import { findRecommendationByQuery } from "@/lib/scoring"
+import type { Locale } from "@/lib/i18n"
 
 const quickPrompts = [
-  "Fix bugs in a large codebase",
-  "Build a SaaS dashboard",
-  "Analyze contracts",
-  "Find MCP tools for coding",
-  "Choose cheap API model",
+  { en: "Fix bugs in a large codebase", ru: "Исправить баги в большом проекте" },
+  { en: "Build a SaaS dashboard", ru: "Собрать SaaS dashboard" },
+  { en: "Analyze contracts", ru: "Проанализировать контракты" },
+  { en: "Find MCP tools for coding", ru: "Найти MCP для кодинга" },
+  { en: "Choose cheap API model", ru: "Выбрать дешёвую API модель" },
 ]
 
-export function HeroSection() {
+type HeroSectionProps = {
+  locale: Locale
+}
+
+export function HeroSection({ locale }: HeroSectionProps) {
   const router = useRouter()
-  const [query, setQuery] = useState("Fix bugs in a large Next.js codebase")
+  const defaultQuery = tr(locale, "Fix bugs in a large Next.js codebase", "Исправить баги в большом Next.js проекте")
+  const [query, setQuery] = useState(defaultQuery)
   const preview = useMemo(() => findRecommendationByQuery(query), [query])
 
   function submitSearch(nextQuery = query) {
@@ -33,19 +40,25 @@ export function HeroSection() {
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="border-cyan-300/30 bg-cyan-300/10 text-cyan-100" variant="outline">
             <Sparkles aria-hidden="true" className="size-3" />
-            AI stack search
+            {tr(locale, "AI stack search", "Поиск AI стека")}
           </Badge>
           <span className="rounded-full border border-amber-200/25 bg-amber-200/10 px-2.5 py-1 text-xs text-amber-100">
-            Demo data · Not real-time yet
+            {tr(locale, "Demo data - Not real-time yet", "Демо-данные - ещё не real-time")}
           </span>
         </div>
         <div className="max-w-3xl space-y-4">
-          <p className="text-xs font-medium uppercase tracking-[0.32em] text-cyan-100/80">AI search intelligence layer</p>
+          <p className="text-xs font-medium uppercase tracking-[0.32em] text-cyan-100/80">
+            {tr(locale, "AI search intelligence layer", "AI search intelligence layer")}
+          </p>
           <h1 className="max-w-3xl text-5xl font-semibold tracking-normal text-stone-50 sm:text-6xl lg:text-7xl">
             Artificial Search
           </h1>
           <p className="max-w-2xl text-xl leading-8 text-stone-200">
-            Find the best AI model, agent, MCP server and skill pack for your task.
+            {tr(
+              locale,
+              "Find the best AI model, agent, MCP server and skill pack for your task.",
+              "Подбери лучшую AI модель, агента, MCP сервер и набор скиллов под свою задачу."
+            )}
           </p>
         </div>
 
@@ -59,26 +72,31 @@ export function HeroSection() {
                   submitSearch()
                 }
               }}
-              placeholder="What do you want AI to do? Example: Fix bugs in a large Next.js codebase"
+              placeholder={tr(
+                locale,
+                "What do you want AI to do? Example: Fix bugs in a large Next.js codebase",
+                "Что должен сделать AI? Например: исправить баги в большом Next.js проекте"
+              )}
               value={query}
             />
             <Button className="h-12 bg-cyan-200 px-5 text-stone-950 hover:bg-cyan-100" onClick={() => submitSearch()}>
               <Search aria-hidden="true" />
-              Search
+              {tr(locale, "Search", "Найти")}
             </Button>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {quickPrompts.map((prompt) => (
               <button
                 className="rounded-full border border-amber-200/15 bg-white/[0.04] px-3 py-1.5 text-xs text-stone-300 transition-colors hover:border-cyan-200/30 hover:bg-cyan-200/10 hover:text-cyan-50"
-                key={prompt}
+                key={prompt.en}
                 onClick={() => {
-                  setQuery(prompt)
-                  submitSearch(prompt)
+                  const nextPrompt = tr(locale, prompt.en, prompt.ru)
+                  setQuery(nextPrompt)
+                  submitSearch(nextPrompt)
                 }}
                 type="button"
               >
-                {prompt}
+                {tr(locale, prompt.en, prompt.ru)}
               </button>
             ))}
           </div>
@@ -88,25 +106,29 @@ export function HeroSection() {
       <div className="luxury-panel rounded-lg p-5">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-medium text-stone-100">Recommended stack preview</p>
-            <p className="text-xs text-stone-400">Prototype keyword matching from demo data</p>
+            <p className="text-sm font-medium text-stone-100">
+              {tr(locale, "Recommended stack preview", "Предпросмотр рекомендуемого стека")}
+            </p>
+            <p className="text-xs text-stone-400">
+              {tr(locale, "Prototype keyword matching from demo data", "Прототипный подбор по ключевым словам из демо-данных")}
+            </p>
           </div>
           <Badge className="border-amber-200/20 bg-amber-200/10 text-amber-100" variant="outline">
-            Mock scoring
+            {tr(locale, "Mock scoring", "Демо-оценка")}
           </Badge>
         </div>
         <div className="grid gap-3">
-          <PreviewField label="Task" value={preview.label} />
-          <PreviewField label="Model" value={preview.model} />
-          <PreviewField label="Agent" value={preview.agent} />
-          <PreviewField label="Skill Pack" value={preview.skillPack} />
+          <PreviewField label={tr(locale, "Task", "Задача")} value={recommendationLabel(locale, preview)} />
+          <PreviewField label={tr(locale, "Model", "Модель")} value={preview.model} />
+          <PreviewField label={tr(locale, "Agent", "Агент")} value={preview.agent} />
+          <PreviewField label={tr(locale, "Skill Pack", "Набор скиллов")} value={preview.skillPack} />
         </div>
         <button
           className="mt-4 inline-flex items-center gap-2 text-sm text-cyan-100 transition-colors hover:text-cyan-50"
           onClick={() => submitSearch()}
           type="button"
         >
-          Open recommendation
+          {tr(locale, "Open recommendation", "Открыть рекомендацию")}
           <ArrowRight aria-hidden="true" className="size-4" />
         </button>
       </div>

@@ -37,6 +37,7 @@ const results = {
   routeStatuses: [],
   apiStatuses: [],
   entitlementChecks: [],
+  localeChecks: [],
   subscriptionChecks: [],
   browserChecks: [],
   browserChecksSkipped: false,
@@ -50,6 +51,9 @@ try {
   for (const route of requiredApiRoutes) {
     results.apiStatuses.push(await checkHttpStatus(baseUrl, route))
   }
+
+  results.localeChecks.push(await changeLocale("ru"))
+  results.localeChecks.push(await changeLocale("en"))
 
   await changePlan("Free")
   results.entitlementChecks.push(await expectStatus("/api/skill-packs/ai-coding-starter/manifest", 200, "Free manifest accessible"))
@@ -135,6 +139,7 @@ const failed = [
   ...results.routeStatuses.filter((item) => item.status !== 200),
   ...results.apiStatuses.filter((item) => item.status !== 200),
   ...results.entitlementChecks.filter((item) => !item.ok),
+  ...results.localeChecks.filter((item) => !item.ok),
   ...results.subscriptionChecks.filter((item) => !item.ok),
   ...results.browserChecks.filter((item) => !item.ok),
 ]
@@ -154,6 +159,25 @@ async function changePlan(plan) {
     },
     body: JSON.stringify({ plan }),
   })
+}
+
+async function changeLocale(locale) {
+  const response = await fetch(`${baseUrl}/api/locale`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ locale }),
+  })
+  const payload = await response.json()
+  const setCookie = response.headers.get("set-cookie") ?? ""
+
+  return {
+    name: `POST /api/locale ${locale}`,
+    ok: response.status === 200 && payload.locale === locale && setCookie.includes(`artificial_search_locale=${locale}`),
+    status: response.status,
+    value: payload.locale,
+  }
 }
 
 async function expectStatus(route, expectedStatus, name) {

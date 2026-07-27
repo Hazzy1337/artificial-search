@@ -4,12 +4,13 @@ import { Fira_Code, Inter } from "next/font/google"
 import { Footer } from "@/components/layout/Footer"
 import { Navbar } from "@/components/layout/Navbar"
 import { PremiumBackground } from "@/components/layout/PremiumBackground"
+import { getCurrentLocale } from "@/lib/i18nServer"
 import { siteUrl } from "@/lib/site"
 import "./globals.css"
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"],
+  subsets: ["latin", "cyrillic"],
   weight: ["300", "400", "500", "600", "700", "800"],
 })
 
@@ -54,19 +55,21 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getCurrentLocale()
+
   return (
-    <html className={`${inter.variable} ${firaCode.variable} dark h-full scroll-smooth antialiased`} lang="en">
+    <html className={`${inter.variable} ${firaCode.variable} dark h-full scroll-smooth antialiased`} lang={locale}>
       <body className="min-h-full bg-background text-foreground">
         <PremiumBackground />
         <div className="flex min-h-dvh flex-col">
-          <Navbar />
+          <Navbar locale={locale} />
           <div className="flex-1">{children}</div>
-          <Footer />
+          <Footer locale={locale} />
         </div>
       </body>
     </html>
