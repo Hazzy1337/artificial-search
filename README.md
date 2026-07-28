@@ -22,7 +22,8 @@ Artificial Search compares seeded AI models, agents, MCP servers and coding skil
 - English/Russian UI language switch
 - QA test cases and smoke scripts
 - SEO metadata, sitemap and robots
-- Documentation pages for course presentation
+- Documentation pages for project explanation
+- Separate presentation guide: `PROJECT_PRESENTATION_GUIDE.md`
 
 ## Tech Stack
 
@@ -174,7 +175,17 @@ For production:
 - configure the domain in Vercel;
 - add real auth and billing before accepting real users.
 
-## Presentation Notes
+## Presentation Guide
+
+Use the separate document:
+
+```text
+PROJECT_PRESENTATION_GUIDE.md
+```
+
+It contains the full Russian presentation script, feature walkthrough, code map and demo checklist.
+
+## Short Presentation Notes
 
 In 2-3 minutes, show:
 

@@ -53,8 +53,10 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, de
 const errors = []
 
 page.on("console", (message) => {
-  if (message.type() === "error") {
-    errors.push(message.text())
+  const text = message.text()
+
+  if (message.type() === "error" && !isIgnorableDevConsoleError(text)) {
+    errors.push(text)
   }
 })
 
@@ -85,3 +87,7 @@ if (failedStatuses.length || errors.length || hasHorizontalOverflow || recommend
 }
 
 console.log(JSON.stringify({ routeStatuses, mobileMetrics, recommendH1, browserPath }, null, 2))
+
+function isIgnorableDevConsoleError(message) {
+  return message.includes("/_next/webpack-hmr") && message.includes("WebSocket connection")
+}

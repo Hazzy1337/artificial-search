@@ -13,6 +13,5 @@ export const siteRoutes = [
   "/docs/architecture",
   "/docs/security",
   "/docs/qa",
-  "/docs/presentation",
   "/qa",
 ]

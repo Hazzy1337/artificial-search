@@ -18,7 +18,6 @@ const requiredRoutes = [
   "/docs/architecture",
   "/docs/security",
   "/docs/qa",
-  "/docs/presentation",
   "/qa",
 ]
 
@@ -101,8 +100,10 @@ if (!browserPath) {
   const consoleErrors = []
 
   page.on("console", (message) => {
-    if (message.type() === "error") {
-      consoleErrors.push(message.text())
+    const text = message.text()
+
+    if (message.type() === "error" && !isIgnorableDevConsoleError(text)) {
+      consoleErrors.push(text)
     }
   })
 
@@ -198,4 +199,8 @@ async function getJson(route, init) {
   }
 
   return response.json()
+}
+
+function isIgnorableDevConsoleError(message) {
+  return message.includes("/_next/webpack-hmr") && message.includes("WebSocket connection")
 }

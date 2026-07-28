@@ -56,7 +56,6 @@ export default async function DocsPage() {
           ["/docs/architecture", tr(locale, "Architecture", "Архитектура")],
           ["/docs/security", tr(locale, "Security", "Безопасность")],
           ["/docs/qa", tr(locale, "QA docs", "QA документы")],
-          ["/docs/presentation", tr(locale, "Presentation script", "Скрипт презентации")],
         ].map(([href, label]) => (
           <Link className="luxury-panel rounded-lg p-4 text-stone-100 hover:text-amber-100" href={href} key={href}>
             {label}
