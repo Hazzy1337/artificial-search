@@ -1,16 +1,23 @@
 import { spawnSync } from "node:child_process"
 
-const databaseUrl = process.env.DATABASE_URL
+const databaseUrl =
+  process.env.DATABASE_URL ??
+  process.env.DATABASE_PRISMA_DATABASE_URL ??
+  process.env.DATABASE_POSTGRES_URL ??
+  process.env.POSTGRES_PRISMA_URL ??
+  process.env.POSTGRES_URL
 
 if (!databaseUrl) {
-  console.warn("DATABASE_URL is not set; skipping Prisma db push and seed.")
+  console.warn("No PostgreSQL database URL is set; skipping Prisma db push and seed.")
   process.exit(0)
 }
 
-if (!/^postgres(?:ql)?:\/\//.test(databaseUrl)) {
-  console.error("DATABASE_URL must be a PostgreSQL connection string for production deploys.")
+if (!/^(postgres(?:ql)?|prisma\+postgres):\/\//.test(databaseUrl)) {
+  console.error("Database URL must be a PostgreSQL or Prisma Postgres connection string for production deploys.")
   process.exit(1)
 }
+
+process.env.DATABASE_URL = databaseUrl
 
 run("prisma", ["db", "push"])
 run("prisma", ["db", "seed"])
