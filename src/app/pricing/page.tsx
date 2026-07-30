@@ -35,14 +35,14 @@ export default async function PricingPage() {
             {tr(locale, "Premium mechanics", "Механика Premium")}
           </Badge>
           <Badge className="border-stone-300/20 bg-white/[0.055] text-stone-200" variant="outline">
-            {tr(locale, "SQLite-backed demo", "Демо на SQLite")}
+            {tr(locale, "Database-backed demo", "Демо через базу данных")}
           </Badge>
         </div>
         <p className="mt-3 max-w-4xl text-sm leading-6 text-stone-300">
           {tr(
             locale,
-            "Pricing buttons update the demo user plan through `POST /api/subscription/change`. Real payments and Stripe checkout are intentionally out of scope for this course MVP.",
-            "Кнопки тарифов обновляют план demo user через `POST /api/subscription/change`. Реальные платежи и Stripe checkout намеренно вне scope этого MVP."
+              "Pricing buttons update the demo user plan through `POST /api/subscription/change`. Real payments and Stripe checkout are intentionally out of scope for this course MVP.",
+              "Кнопки тарифов обновляют план demo user через `POST /api/subscription/change`. Реальные платежи и Stripe checkout намеренно вне scope этого MVP."
           )}
         </p>
       </section>

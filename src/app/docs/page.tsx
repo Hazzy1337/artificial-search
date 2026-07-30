@@ -48,7 +48,7 @@ export default async function DocsPage() {
         )}
       </DocBlock>
       <DocBlock title={tr(locale, "Tech stack", "Технический стек")}>
-        Next.js App Router, TypeScript, Tailwind CSS, Prisma, SQLite, Next API routes and Playwright-based smoke checks.
+        Next.js App Router, TypeScript, Tailwind CSS, Prisma, PostgreSQL, Next API routes and Playwright-based smoke checks.
       </DocBlock>
 
       <section className="grid gap-3 sm:grid-cols-2">

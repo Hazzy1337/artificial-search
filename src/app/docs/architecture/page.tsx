@@ -35,7 +35,7 @@ export default async function ArchitectureDocsPage() {
       <section className="luxury-panel rounded-lg p-5 text-sm leading-6 text-stone-300">
         <p>{tr(locale, "Frontend: Next.js App Router, TypeScript, Tailwind CSS and reusable React components.", "Frontend: Next.js App Router, TypeScript, Tailwind CSS и переиспользуемые React components.")}</p>
         <p>{tr(locale, "Backend: Next API route handlers under `src/app/api`.", "Backend: Next API route handlers в `src/app/api`.")}</p>
-        <p>{tr(locale, "Database: Prisma Client with SQLite for local course demo.", "Database: Prisma Client с SQLite для локального course demo.")}</p>
+        <p>{tr(locale, "Database: Prisma Client with PostgreSQL for production demo persistence.", "Database: Prisma Client с PostgreSQL для production demo persistence.")}</p>
       </section>
 
       <section className="luxury-panel rounded-lg p-5">
@@ -45,7 +45,7 @@ export default async function ArchitectureDocsPage() {
   -> Next.js page / client component
   -> Next API route or server helper
   -> Prisma Client
-  -> SQLite dev.db
+  -> PostgreSQL
   -> JSON / rendered UI`}
         </pre>
       </section>

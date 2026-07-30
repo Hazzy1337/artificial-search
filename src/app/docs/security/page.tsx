@@ -21,8 +21,8 @@ export default async function SecurityDocsPage() {
       <SecurityBlock title={tr(locale, "Demo subscription access", "Доступ demo subscription")}>
         {tr(
           locale,
-          "The app uses one database-backed demo user. Free, Premium and Pro plan changes are stored in SQLite and are clearly labeled as a course demo flow, not real payment processing.",
-          "Приложение использует одного demo user из базы. Изменения планов Free, Premium и Pro сохраняются в SQLite и явно помечены как course demo flow, а не реальные платежи."
+          "The app uses one database-backed demo user. Free, Premium and Pro plan changes are stored in the production database and are clearly labeled as a course demo flow, not real payment processing.",
+          "Приложение использует одного demo user из базы. Изменения планов Free, Premium и Pro сохраняются в production-базе и явно помечены как course demo flow, а не реальные платежи."
         )}
       </SecurityBlock>
       <SecurityBlock title={tr(locale, "Server-side entitlement checks", "Server-side проверки доступа")}>

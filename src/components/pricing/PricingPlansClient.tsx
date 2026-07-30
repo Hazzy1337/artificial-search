@@ -58,8 +58,8 @@ export function PricingPlansClient({ initialUser, locale, plans }: PricingPlansC
             <p className="mt-1 text-sm leading-6 text-stone-400">
               {tr(
                 locale,
-                "Demo subscription flow for course project. Plan changes are persisted in SQLite for the demo user.",
-                "Демо-подписка для курсового проекта. Изменения тарифа сохраняются в SQLite для demo user."
+                "Demo subscription flow for course project. Plan changes are persisted in the production database for the demo user.",
+                "Демо-подписка для курсового проекта. Изменения тарифа сохраняются в production-базе для demo user."
               )}
             </p>
           </div>

@@ -64,8 +64,8 @@ export const skillPacks: SkillPack[] = [
     tier: "Premium",
     compatibilityScore: 90,
     status: "community",
-    riskNotes: ["SQLite demo data is not production persistence"],
-    recommendedFor: ["Prisma", "SQLite", "Seed data", "Fullstack demos"],
+    riskNotes: ["Production data needs managed PostgreSQL persistence"],
+    recommendedFor: ["Prisma", "PostgreSQL", "Seed data", "Fullstack demos"],
   },
   {
     id: "fullstack-debugging",
@@ -168,7 +168,7 @@ export const skillPacks: SkillPack[] = [
     tier: "Pro",
     compatibilityScore: 88,
     status: "community",
-    riskNotes: ["Production databases need managed persistence, not local SQLite"],
+    riskNotes: ["Production databases need managed persistence, not local database files"],
     recommendedFor: ["Vercel", "Env setup", "Release checks"],
   },
   {

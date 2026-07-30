@@ -16,7 +16,7 @@ Artificial Search compares seeded AI models, agents, MCP servers and coding skil
 - AI agent comparison
 - MCP server catalog with risk labels and permissions
 - Skill pack marketplace with Free, Premium and Pro access
-- Demo subscription flow backed by SQLite
+- Demo subscription flow backed by PostgreSQL
 - Gated skill pack manifest downloads
 - Recommendation wizard with access warnings
 - English/Russian UI language switch
@@ -31,7 +31,7 @@ Artificial Search compares seeded AI models, agents, MCP servers and coding skil
 - TypeScript
 - Tailwind CSS
 - Prisma
-- SQLite for local demo
+- PostgreSQL for production demo persistence
 - Next API routes
 - Playwright Core for optional browser QA
 
@@ -42,7 +42,7 @@ Browser UI
   -> Next.js page / client component
   -> Next API route or server helper
   -> Prisma Client
-  -> SQLite dev.db
+  -> PostgreSQL
   -> JSON response or rendered UI
 ```
 
@@ -57,7 +57,7 @@ Prisma models:
 - `SkillPack`
 - `QaTestCase`
 
-SQLite is used because the project must be easy to run locally for the AIT Fullstack course presentation.
+PostgreSQL is used for production persistence on Vercel. Seed scripts keep the course demo data reproducible.
 
 ## API Routes
 
@@ -87,7 +87,7 @@ Plans:
 - Premium
 - Pro
 
-Pricing buttons call `POST /api/subscription/change` and persist the selected plan in SQLite. This is a demo subscription flow for the course project, not a real payment integration.
+Pricing buttons call `POST /api/subscription/change` and persist the selected plan in PostgreSQL. This is a demo subscription flow for the course project, not a real payment integration.
 
 ## Security Notes
 
@@ -158,20 +158,21 @@ npm run qa
 
 ## Deployment
 
-Vercel can deploy the Next.js app. SQLite is acceptable for the local course demo, but production should use Postgres.
+Vercel deploys the Next.js app and runs the production database deploy step through `npm run vercel-build`.
 
 Required environment variables:
 
 ```env
-DATABASE_URL="file:./dev.db"
-NEXT_PUBLIC_APP_URL="https://artificial-search.com"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+NEXT_PUBLIC_APP_URL="https://www.artificial-search.com"
 DEMO_USER_EMAIL="demo@artificial-search.com"
 ```
 
 For production:
 
-- replace SQLite with Postgres;
-- set `NEXT_PUBLIC_APP_URL` to `https://artificial-search.com`;
+- create a Vercel Postgres, Prisma Postgres or Neon database;
+- set `DATABASE_URL` in Vercel;
+- set `NEXT_PUBLIC_APP_URL` to `https://www.artificial-search.com`;
 - configure the domain in Vercel;
 - add real auth and billing before accepting real users.
 
@@ -202,5 +203,5 @@ In 2-3 minutes, show:
 - Seeded data, not live real-time rankings.
 - Demo subscription, not real Stripe.
 - Demo user, not OAuth.
-- SQLite is local-demo persistence.
+- PostgreSQL is demo persistence, not a full production auth/billing model.
 - MCP install commands are placeholders unless explicitly verified.

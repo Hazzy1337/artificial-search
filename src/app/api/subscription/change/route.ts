@@ -18,10 +18,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "plan must be Free, Premium or Pro" }, { status: 400 })
   }
 
-  const user = await changeDemoSubscription(plan)
+  try {
+    const user = await changeDemoSubscription(plan)
 
-  return NextResponse.json({
-    user,
-    note: "Demo subscription flow for course project",
-  })
+    return NextResponse.json({
+      user,
+      note: "Demo subscription flow for course project",
+    })
+  } catch (error) {
+    console.error("Demo subscription update failed", error)
+
+    return NextResponse.json(
+      {
+        error: "Demo subscription database is unavailable",
+        note: "Check DATABASE_URL and run the production database deploy step.",
+      },
+      { status: 503 }
+    )
+  }
 }

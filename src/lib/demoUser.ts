@@ -3,27 +3,38 @@ import { fromPrismaPlanValue, toPrismaPlanValue } from "@/lib/plans"
 import type { DemoUser, PlanName } from "@/lib/types"
 
 const demoUserEmail = process.env.DEMO_USER_EMAIL ?? "demo@artificial-search.com"
+const fallbackDemoUser: DemoUser = {
+  id: "demo-user-fallback",
+  name: "Demo User",
+  email: demoUserEmail,
+  plan: "Free",
+}
 
 export async function getDemoUser(): Promise<DemoUser> {
-  const existingUser = await db.user.findUnique({
-    where: { email: demoUserEmail },
-  })
+  try {
+    const existingUser = await db.user.findUnique({
+      where: { email: demoUserEmail },
+    })
 
-  const user =
-    existingUser ??
-    (await db.user.create({
-      data: {
-        name: "Demo User",
-        email: demoUserEmail,
-        plan: "FREE",
-      },
-    }))
+    const user =
+      existingUser ??
+      (await db.user.create({
+        data: {
+          name: "Demo User",
+          email: demoUserEmail,
+          plan: "FREE",
+        },
+      }))
 
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    plan: fromPrismaPlanValue(user.plan),
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      plan: fromPrismaPlanValue(user.plan),
+    }
+  } catch (error) {
+    console.error("Demo user database read failed", error)
+    return fallbackDemoUser
   }
 }
 
