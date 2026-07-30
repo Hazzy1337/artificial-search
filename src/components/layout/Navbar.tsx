@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { Bot, Brain, CreditCard, GitCompare, Menu, Package, Puzzle, Sparkles, Stars } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -33,7 +33,6 @@ type NavbarProps = {
 
 export function Navbar({ locale }: NavbarProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const [plan, setPlan] = useState<PlanName | null>(null)
 
   useEffect(() => {
@@ -71,20 +70,7 @@ export function Navbar({ locale }: NavbarProps) {
     }
   }, [])
 
-  async function changeLocale(nextLocale: Locale) {
-    if (nextLocale === locale) {
-      return
-    }
-
-    await fetch("/api/locale", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ locale: nextLocale }),
-    })
-    router.refresh()
-  }
+  const returnTo = pathname || "/"
 
   return (
     <header className="sticky top-0 z-40 border-b border-amber-200/10 bg-black/45 backdrop-blur-2xl">
@@ -124,7 +110,7 @@ export function Navbar({ locale }: NavbarProps) {
           >
             {tr(locale, "Demo user", "Демо пользователь")}: {plan ?? "..."}
           </Link>
-          <LanguageSwitch locale={locale} onChange={changeLocale} />
+          <LanguageSwitch locale={locale} returnTo={returnTo} />
           <Button asChild className="border-amber-200/30 bg-white/5 text-amber-100 hover:bg-amber-200/10" variant="outline">
             <Link href="/recommend">{tr(locale, "Find Stack", "Подобрать стек")}</Link>
           </Button>
@@ -137,7 +123,7 @@ export function Navbar({ locale }: NavbarProps) {
           {plan ?? "..."}
         </Link>
         <div className="sm:hidden">
-          <LanguageSwitch locale={locale} onChange={changeLocale} />
+          <LanguageSwitch locale={locale} returnTo={returnTo} />
         </div>
 
         <DropdownMenu>
@@ -165,22 +151,22 @@ export function Navbar({ locale }: NavbarProps) {
   )
 }
 
-function LanguageSwitch({ locale, onChange }: { locale: Locale; onChange: (locale: Locale) => void }) {
+function LanguageSwitch({ locale, returnTo }: { locale: Locale; returnTo: string }) {
   return (
     <div className="inline-flex h-10 overflow-hidden rounded-lg border border-stone-300/20 bg-white/[0.04]">
       {(["en", "ru"] as const).map((item) => (
-        <button
-          aria-pressed={locale === item}
+        <a
+          aria-label={tr(locale, item === "en" ? "Switch to English" : "Switch to Russian", item === "en" ? "Переключить на английский" : "Переключить на русский")}
+          aria-current={locale === item ? "true" : undefined}
           className={cn(
-            "min-w-10 px-2 text-xs font-medium text-stone-300 transition-colors hover:bg-white/8 hover:text-stone-50",
+            "inline-flex min-w-10 items-center justify-center px-2 text-xs font-medium text-stone-300 transition-colors hover:bg-white/8 hover:text-stone-50",
             locale === item && "bg-cyan-200/15 text-cyan-100"
           )}
+          href={`/api/locale?locale=${item}&returnTo=${encodeURIComponent(returnTo)}`}
           key={item}
-          onClick={() => onChange(item)}
-          type="button"
         >
           {item.toUpperCase()}
-        </button>
+        </a>
       ))}
     </div>
   )
