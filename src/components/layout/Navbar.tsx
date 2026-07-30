@@ -74,15 +74,15 @@ export function Navbar({ locale }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-amber-200/10 bg-black/45 backdrop-blur-2xl">
-      <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6 lg:px-8">
-        <Link className="flex items-center gap-2 text-sm font-semibold text-stone-50" href="/">
+      <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
+        <Link className="flex shrink-0 items-center gap-2 text-sm font-semibold text-stone-50" href="/">
           <span className="grid size-8 place-items-center rounded-lg border border-amber-200/30 bg-amber-200/10 text-amber-100 shadow-[0_0_30px_rgba(231,200,115,0.18)]">
             <Stars aria-hidden="true" className="size-4" />
           </span>
           <span className="hidden sm:inline">Artificial Search</span>
         </Link>
 
-        <nav aria-label={tr(locale, "Primary navigation", "Основная навигация")} className="hidden items-center gap-1 lg:flex">
+        <nav aria-label={tr(locale, "Primary navigation", "Основная навигация")} className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex">
           {navItems.map((item) => {
             const Icon = item.icon
             const active = pathname === item.href
@@ -90,7 +90,7 @@ export function Navbar({ locale }: NavbarProps) {
             return (
               <Link
                 className={cn(
-                  "inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm text-stone-300 transition-colors hover:bg-white/8 hover:text-stone-50",
+                  "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 text-sm text-stone-300 transition-colors hover:bg-white/8 hover:text-stone-50 xl:px-3",
                   active && "bg-amber-200/10 text-amber-100"
                 )}
                 href={item.href}
@@ -103,15 +103,18 @@ export function Navbar({ locale }: NavbarProps) {
           })}
         </nav>
 
-        <div className="hidden items-center gap-2 sm:flex">
+        <div className="hidden shrink-0 items-center gap-2 sm:flex">
           <Link
-            className="rounded-lg border border-cyan-200/20 bg-cyan-200/10 px-3 py-2 text-xs font-medium text-cyan-100"
+            aria-label={`${tr(locale, "Demo user", "Демо пользователь")}: ${plan ?? "..."}`}
+            className="inline-flex h-10 shrink-0 items-center gap-1 rounded-lg border border-cyan-200/20 bg-cyan-200/10 px-2.5 text-xs font-medium text-cyan-100"
             href="/pricing"
           >
-            {tr(locale, "Demo user", "Демо пользователь")}: {plan ?? "..."}
+            <span>{tr(locale, "Demo", "Демо")}</span>
+            <span aria-hidden="true">:</span>
+            <span className="tabular-nums">{plan ?? "..."}</span>
           </Link>
           <LanguageSwitch locale={locale} returnTo={returnTo} />
-          <Button asChild className="border-amber-200/30 bg-white/5 text-amber-100 hover:bg-amber-200/10" variant="outline">
+          <Button asChild className="shrink-0 border-amber-200/30 bg-white/5 text-amber-100 hover:bg-amber-200/10" variant="outline">
             <Link href="/recommend">{tr(locale, "Find Stack", "Подобрать стек")}</Link>
           </Button>
         </div>
@@ -127,7 +130,7 @@ export function Navbar({ locale }: NavbarProps) {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild className="lg:hidden">
+          <DropdownMenuTrigger asChild className="xl:hidden">
             <Button aria-label={tr(locale, "Open navigation menu", "Открыть меню")} size="icon" variant="outline">
               <Menu aria-hidden="true" />
             </Button>
@@ -153,7 +156,7 @@ export function Navbar({ locale }: NavbarProps) {
 
 function LanguageSwitch({ locale, returnTo }: { locale: Locale; returnTo: string }) {
   return (
-    <div className="inline-flex h-10 overflow-hidden rounded-lg border border-stone-300/20 bg-white/[0.04]">
+    <div className="inline-flex h-10 shrink-0 overflow-hidden rounded-lg border border-stone-300/20 bg-white/[0.04]">
       {(["en", "ru"] as const).map((item) => (
         <a
           aria-label={tr(locale, item === "en" ? "Switch to English" : "Switch to Russian", item === "en" ? "Переключить на английский" : "Переключить на русский")}
