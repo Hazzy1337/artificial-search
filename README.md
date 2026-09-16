@@ -2,6 +2,8 @@
 
 Artificial Search is a fullstack AI-stack marketplace and recommendation dashboard for developers.
 
+> Portfolio note: this is an AI-product discovery application built with seeded catalog data. It does not claim to train or serve an LLM.
+
 ## Problem
 
 Developers have many AI models, coding agents, MCP servers and workflow skill packs to choose from. The wrong combination can waste time, expose private files or produce weak results.
@@ -205,3 +207,19 @@ In 2-3 minutes, show:
 - Demo user, not OAuth.
 - PostgreSQL is demo persistence, not a full production auth/billing model.
 - MCP install commands are placeholders unless explicitly verified.
+
+## My Contribution
+
+- designed and implemented the Next.js application and bilingual interface;
+- modeled the Prisma/PostgreSQL demo data and seed workflow;
+- implemented API routes and server-side plan checks for gated manifests;
+- added comparison, recommendation, QA, security-documentation, sitemap, and deployment flows;
+- prepared reproducible smoke and QA scripts for the course MVP.
+
+## Author
+
+Sergej Gordeev (Paluch)
+
+## License
+
+No license is granted at this time. The source is publicly visible for portfolio and review purposes. Contact the author before reuse or redistribution.
